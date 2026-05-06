@@ -241,13 +241,95 @@ ln -s /absolute/path/to/.agent/skills/llm-wiki-bootstrap ~/.codex/skills/llm-wik
 | Query | 直接提领域问题 | 先读索引，再读相关页面，最后输出带引用的综合回答 |
 | Lint | `"lint"` 或 `"health check"` | 检查矛盾、过期结论、孤儿页和缺失链接 |
 
+## EXTEND.md 偏好配置
+
+Skill 在 bootstrap、ingest、query、lint 或可选 BM25 初始化前，会先读取 `EXTEND.md`。按下面优先级查找，找到第一份就生效：
+
+| 优先级 | 路径 | 作用域 |
+| --- | --- | --- |
+| 1 | `.llm-wiki-bootstrap/EXTEND.md` | 当前项目 / wiki 根目录 |
+| 2 | `${XDG_CONFIG_HOME:-$HOME/.config}/llm-wiki-bootstrap/EXTEND.md` | XDG |
+| 3 | `$HOME/.llm-wiki-bootstrap/EXTEND.md` | 用户全局 |
+
+如果没有找到配置，Skill 会先执行首次偏好设置，不会静默套用默认值。当前最重要的可配置项是可选 BM25 检索层：提醒模式、启用阈值、ingest 后是否自动重建、索引路径、chunk 大小、失败回退和导出默认格式。
+
+## 可选 BM25 检索层
+
+BM25 是一个本地、可再生的全文搜索层，适合 wiki 变大之后使用。当 `wiki/index.md` 和直接文件搜索已经不能稳定找到相关资料时，BM25 可以帮助 LLM 更快召回候选段落。
+
+推荐触发阈值写在 `EXTEND.md` 中，用户可以自由修改：
+
+```yaml
+bm25:
+  mode: auto_prompt
+  thresholds:
+    source_count: 30
+    wiki_page_count: 150
+    wiki_text_chars: 250000
+    index_lines: 500
+    query_read_pages: 15
+```
+
+模式含义：
+
+| Mode | 行为 |
+| --- | --- |
+| `auto_prompt` | 达到配置阈值后，询问是否初始化 BM25 |
+| `manual` | 永不自动提醒；只有用户明确要求时才初始化 |
+| `off` | 关闭 BM25 检查和提醒 |
+| `enabled` | BM25 可用时使用；缺失时询问是否初始化 |
+| `required` | 配置后 ingest/query/lint 必须依赖 BM25，可用性不满足则停止 |
+
+LLM 和 BM25 的协作方式：
+
+```text
+用户问题
+  -> LLM 提取关键词、实体和意图
+  -> BM25 返回候选 wiki chunks
+  -> LLM 打开命中的 wiki 页面
+  -> LLM 阅读完整上下文并继续 follow wikilinks
+  -> LLM 用 wiki 页面引用来回答
+```
+
+BM25 不是知识真源。它不判断 claim 真伪，不替代 `SCHEMA.md`，不替代 wiki，也不直接生成最终答案。它只帮助 LLM 找候选段落；LLM 必须打开完整 wiki 页面后再综合回答。
+
+当用户选择初始化 BM25，wiki 会新增：
+
+```text
+scripts/wiki_fts.py
+indexes/README.md
+indexes/fts.sqlite      # 可再生，默认不提交 git
+exports/                # 可再生导出，默认不提交 git
+```
+
+常用命令：
+
+```bash
+python scripts/wiki_fts.py doctor
+python scripts/wiki_fts.py build
+python scripts/wiki_fts.py rebuild
+python scripts/wiki_fts.py search "query text" --limit 10
+python scripts/wiki_fts.py stats
+```
+
+全量导出：
+
+```bash
+python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+python scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
+python scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
+```
+
+导出内容是索引语料和元数据，不是固定 BM25 排名。BM25 分数依赖具体 query，会在查询时计算。如果 wiki 里有私密资料，请把 `fts.sqlite` 和 `exports/*` 当作敏感文件处理。
+
 ## 仓库结构
 
 | 路径 | 用途 |
 | --- | --- |
 | [skill/SKILL.md](./skill/SKILL.md) | 可安装的 Skill 定义 |
 | [skill/references/templates](./skill/references/templates) | bootstrap 过程中使用的模板 |
-| [skill/references/workflows](./skill/references/workflows) | ingest、query、lint 的详细工作流参考 |
+| [skill/references/workflows](./skill/references/workflows) | ingest、query、lint 和 BM25 的详细工作流参考 |
+| [skill/references/config/extend-schema.md](./skill/references/config/extend-schema.md) | `EXTEND.md` 偏好配置 schema |
 | [karpathy-llm-wiki-original.md](./karpathy-llm-wiki-original.md) | 原始理念笔记的仓库内副本 |
 | [llm-wiki/SCHEMA.md](./llm-wiki/SCHEMA.md) | 示例 Wiki 的单一真源操作契约 |
 | [llm-wiki/AGENTS.md](./llm-wiki/AGENTS.md) | 示例 Wiki 的 Codex 轻量指针，重定向到 SCHEMA.md |

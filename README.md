@@ -241,13 +241,95 @@ All rules live in `SCHEMA.md`. Pointers never duplicate rule content — so you 
 | Query | Ask a domain question | Reads the index, opens relevant pages, and answers with citations |
 | Lint | `"lint"` or `"health check"` | Audits contradictions, stale claims, orphan pages, and missing links |
 
+## Preferences With EXTEND.md
+
+The skill reads preferences from `EXTEND.md` before bootstrap, ingest, query, lint, or optional BM25 setup. The first file found wins:
+
+| Priority | Path | Scope |
+| --- | --- | --- |
+| 1 | `.llm-wiki-bootstrap/EXTEND.md` | Project / wiki root |
+| 2 | `${XDG_CONFIG_HOME:-$HOME/.config}/llm-wiki-bootstrap/EXTEND.md` | XDG |
+| 3 | `$HOME/.llm-wiki-bootstrap/EXTEND.md` | User home |
+
+If no preferences exist, the skill runs first-time setup instead of silently using defaults. The main configurable area today is the optional BM25 search layer: reminder mode, thresholds, rebuild policy, indexed paths, chunk size, fallback behavior, and export defaults.
+
+## Optional BM25 Search Layer
+
+BM25 is an optional, local, rebuildable full-text search layer for larger wikis. It is useful when `wiki/index.md` and direct file search are no longer enough to reliably find all relevant material.
+
+Recommended trigger thresholds live in `EXTEND.md` and can be changed by the user:
+
+```yaml
+bm25:
+  mode: auto_prompt
+  thresholds:
+    source_count: 30
+    wiki_page_count: 150
+    wiki_text_chars: 250000
+    index_lines: 500
+    query_read_pages: 15
+```
+
+Modes:
+
+| Mode | Behavior |
+| --- | --- |
+| `auto_prompt` | Ask whether to initialize BM25 when configured thresholds are reached |
+| `manual` | Never ask automatically; only set up BM25 when explicitly requested |
+| `off` | Disable BM25 checks and reminders |
+| `enabled` | Use BM25 when available; ask to initialize if missing |
+| `required` | Require BM25 for ingest/query/lint once configured |
+
+How the LLM uses BM25:
+
+```text
+User question
+  -> LLM extracts terms, entities, and intent
+  -> BM25 returns candidate wiki chunks
+  -> LLM opens the matching wiki pages
+  -> LLM reads full context and follows wikilinks
+  -> LLM answers with citations to wiki pages
+```
+
+BM25 is not a source of truth. It does not judge claims, replace `SCHEMA.md`, replace the wiki, or produce final answers. It helps the LLM find candidate passages. The LLM must still read the full wiki pages before answering.
+
+When the user chooses to initialize BM25, the wiki gets:
+
+```text
+scripts/wiki_fts.py
+indexes/README.md
+indexes/fts.sqlite      # rebuildable, ignored by git
+exports/                # rebuildable exports, ignored by git
+```
+
+Common commands:
+
+```bash
+python scripts/wiki_fts.py doctor
+python scripts/wiki_fts.py build
+python scripts/wiki_fts.py rebuild
+python scripts/wiki_fts.py search "query text" --limit 10
+python scripts/wiki_fts.py stats
+```
+
+Full export:
+
+```bash
+python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+python scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
+python scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
+```
+
+Exports contain indexed chunks and metadata, not static BM25 scores. BM25 scores are computed per query. Treat `fts.sqlite` and exported files as sensitive if the wiki contains private material.
+
 ## Repository Layout
 
 | Path | Purpose |
 | --- | --- |
 | [skill/SKILL.md](./skill/SKILL.md) | Installable skill definition |
 | [skill/references/templates](./skill/references/templates) | Templates used during bootstrap |
-| [skill/references/workflows](./skill/references/workflows) | Detailed ingest, query, and lint workflow references |
+| [skill/references/workflows](./skill/references/workflows) | Detailed ingest, query, lint, and BM25 workflow references |
+| [skill/references/config/extend-schema.md](./skill/references/config/extend-schema.md) | `EXTEND.md` preference schema |
 | [karpathy-llm-wiki-original.md](./karpathy-llm-wiki-original.md) | Repository copy of the original idea note |
 | [llm-wiki/SCHEMA.md](./llm-wiki/SCHEMA.md) | Single source of truth for agent instructions |
 | [llm-wiki/AGENTS.md](./llm-wiki/AGENTS.md) | Thin Codex pointer that redirects to SCHEMA.md |

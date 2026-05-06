@@ -55,6 +55,8 @@ Body conventions:
 
 ## Operations
 
+Before any operation, check for `EXTEND.md` preferences using the priority order in the skill. If a preference file is found, apply it. If none exists, run first-time preference setup before continuing.
+
 ### Ingest
 
 Trigger: user adds a file to `raw/` and says "ingest {filename}".
@@ -111,6 +113,20 @@ Protocol:
    - Fixed: {list}
    - Deferred: {list}
    ```
+
+## Search Layer
+
+The default navigation layer is `wiki/index.md` plus direct file search. A local BM25 search layer may be added later when the wiki grows.
+
+BM25 is optional, configurable through `EXTEND.md`, and never a source of truth. It only returns candidate wiki chunks. You must open the returned wiki pages, read full context, follow relevant wikilinks, and cite wiki pages rather than sqlite rows.
+
+If BM25 is enabled:
+
+1. For query, read `wiki/index.md`, run `python scripts/wiki_fts.py search "{query}" --limit 10`, open returned pages, then answer with wiki citations.
+2. For ingest, search BM25 before creating new entity, concept, comparison, synthesis, or domain-specific pages, so duplicate pages are avoided.
+3. After ingest, run `python scripts/wiki_fts.py build` if `auto_rebuild_after_ingest` is enabled in `EXTEND.md`.
+4. For lint, run `python scripts/wiki_fts.py stats`; if the index is stale, rebuild or record a warning.
+5. If BM25 fails and preferences allow fallback, continue with `wiki/index.md` and `rg`.
 
 ## Index Protocol
 

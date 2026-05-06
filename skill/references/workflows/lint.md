@@ -8,6 +8,12 @@ User says "lint", "health check", "review wiki", "check consistency", or "wiki m
 
 ## Core Sequence
 
+### Step 0: Preferences and Search Gate
+
+Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
+
+If `bm25.mode: auto_prompt`, check configured thresholds. If reached and BM25 is not initialized, ask whether to initialize it. If the user agrees, follow `references/workflows/bm25.md`.
+
 ### Step 1: Full Scan
 
 Read `wiki/index.md`, then read every page listed. Build an internal model of:
@@ -16,6 +22,14 @@ Read `wiki/index.md`, then read every page listed. Build an internal model of:
 - All `sources` frontmatter entries
 - All contradiction blocks
 - All tags
+
+If BM25 is enabled, also run:
+
+```bash
+python scripts/wiki_fts.py stats
+```
+
+Record whether the index is fresh.
 
 ### Step 2: Run Checks
 
@@ -47,6 +61,15 @@ Execute each check category. Collect findings as a numbered list.
 | Missing backlinks | Page A links to Page B, but B doesn't link back to A (when topically relevant) | Low |
 | Isolated clusters | Groups of pages that link to each other but not to the rest of the wiki | Medium |
 | Tag inconsistency | Same concept tagged differently across pages | Low |
+
+**2.4 Search Layer Checks**
+
+| Check | Issue | Severity |
+|-------|-------|----------|
+| Stale BM25 index | `python scripts/wiki_fts.py stats` reports `Fresh: no` | Medium |
+| Missing BM25 files | Preferences require or enable BM25 but `scripts/wiki_fts.py` or `indexes/README.md` is missing | High |
+| Repeated unlinked term | BM25/`rg` finds a concept title in 3+ pages without wikilinks | Low |
+| Duplicate candidates | Similar page titles or repeated exact terms suggest duplicate pages | Medium |
 
 ### Step 3: Report
 
@@ -84,6 +107,7 @@ For each approved fix:
 - Update cross-references
 - Resolve contradictions if newer data is clear
 - Update `wiki/index.md`
+- Rebuild BM25 if enabled and wiki pages changed
 
 ### Step 6: Log
 

@@ -8,6 +8,7 @@ User adds a file to `raw/` and instructs the LLM to process it. Trigger phrases:
 
 ## Pre-flight Checks
 
+0. Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
 1. Verify file exists in `raw/`
 2. Determine file type:
    | Type | Action |
@@ -18,6 +19,7 @@ User adds a file to `raw/` and instructs the LLM to process it. Trigger phrases:
    | CSV / JSON | Summarize structure and key data points |
    | Other | Ask user how to handle |
 3. Check `wiki/log.md` — has this source been ingested before? If yes, ask user: "This source was ingested on {date}. Re-ingest (update) or skip?"
+4. If `bm25.mode: auto_prompt`, check whether the wiki has crossed the configured BM25 thresholds. If yes, ask whether to initialize BM25 before ingest. If the user agrees, follow `references/workflows/bm25.md`.
 
 ## Core Sequence
 
@@ -66,6 +68,10 @@ Body structure:
 ### Step 4: Ripple Updates
 
 For each entity and concept the source touches:
+- If BM25 is enabled, search for existing related pages before creating new pages:
+  ```bash
+  python scripts/wiki_fts.py search "{candidate entity or concept}" --limit 10
+  ```
 - If page exists → add new information, update `sources` frontmatter, revise summary if needed
 - If page doesn't exist → create it with information from this source
 - If source contradicts existing content → add contradiction block to both pages
@@ -90,6 +96,17 @@ Append structured entry to `wiki/log.md`.
 
 Re-read `wiki/overview.md` and assess whether the new source changes the big picture. If yes, revise. If no, skip. Even for small wikis, keep the overview current — a single source can reshape the narrative.
 
+### Step 8: Refresh Search Index
+
+If BM25 is enabled and `auto_rebuild_after_ingest: true`:
+
+```bash
+python scripts/wiki_fts.py build
+python scripts/wiki_fts.py stats
+```
+
+If rebuild fails, do not roll back wiki edits. Record the failure in `wiki/log.md` and fall back to `wiki/index.md` plus `rg` for subsequent navigation.
+
 ## Batch Ingest
 
 When processing multiple sources at once:
@@ -97,6 +114,7 @@ When processing multiple sources at once:
 2. Skip Step 2 (user discussion) unless contradictions are found
 3. Consolidate log entries into a single batch entry
 4. Revise overview once at the end, not after each source
+5. Rebuild BM25 once at the end if enabled and configured for automatic rebuild
 
 ## Edge Cases
 

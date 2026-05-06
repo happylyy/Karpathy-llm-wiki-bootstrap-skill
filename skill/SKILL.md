@@ -3,10 +3,13 @@ name: llm-wiki-bootstrap
 description: >
   Scaffolds a personal LLM Wiki from scratch — the Karpathy pattern of incrementally
   building a persistent, interlinked markdown knowledge base maintained by LLMs.
-  Generates directory structure, schema file, index, log, and workflow conventions.
+  Generates directory structure, schema file, index, log, EXTEND.md preferences,
+  workflow conventions, and optional BM25 local search setup/export tooling.
   Use when user says "create wiki", "new wiki", "bootstrap wiki", "llm wiki",
   "knowledge base", "start a wiki", "build a wiki", or wants to set up a
-  structured markdown knowledge base for any domain.
+  structured markdown knowledge base for any domain. Also use when the user asks
+  to configure BM25, full-text search, wiki search, or EXTEND.md preferences for
+  an LLM Wiki.
 version: 0.1.0
 ---
 
@@ -16,9 +19,27 @@ Scaffold a complete LLM Wiki framework from zero: directory structure, schema (t
 
 **Guiding principle**: The wiki is a persistent, compounding artifact. The LLM writes and maintains all content. The human curates sources, directs analysis, and asks questions. This skill builds the scaffolding; the user and their LLM fill it with knowledge over time.
 
+## Preference Preflight
+
+Before bootstrap, ingest, query, lint, or BM25 work, check for `EXTEND.md` preferences. Use the first file found:
+
+| Priority | Path | Scope |
+| --- | --- | --- |
+| 1 | `.llm-wiki-bootstrap/EXTEND.md` | Project or wiki root |
+| 2 | `${XDG_CONFIG_HOME:-$HOME/.config}/llm-wiki-bootstrap/EXTEND.md` | XDG |
+| 3 | `$HOME/.llm-wiki-bootstrap/EXTEND.md` | User home |
+
+If found, read, parse, and apply it. On first use in a session, briefly remind:
+
+```text
+Using preferences from {path}. You can edit EXTEND.md to customize BM25 thresholds, ingest behavior, search policy, etc.
+```
+
+If not found, run first-time preference setup before continuing. Do not silently use defaults. Use [references/config/extend-schema.md](references/config/extend-schema.md) and [references/templates/extend.md](references/templates/extend.md).
+
 ## Workflow
 
-Six sequential phases. Each phase completes before the next begins.
+Run Preference Preflight first, then six sequential bootstrap phases. Each phase completes before the next begins.
 
 ### Phase 1: Gather Requirements
 
@@ -204,13 +225,50 @@ Next steps:
 
 ## Post-Bootstrap Operations
 
-The schema file generated in Phase 3 defines three core operations. These are documented in detail in:
+The schema file generated in Phase 3 defines three core operations and an optional BM25 search layer. These are documented in detail in:
 
 - [references/workflows/ingest.md](references/workflows/ingest.md) — source ingestion protocol
 - [references/workflows/query.md](references/workflows/query.md) — query and answer-filing protocol
 - [references/workflows/lint.md](references/workflows/lint.md) — wiki health-check protocol
+- [references/workflows/bm25.md](references/workflows/bm25.md) — optional local BM25 setup, search, rebuild, export, and fallback protocol
 
 The schema file embeds condensed versions of these workflows. The reference files here contain the full rationale and edge cases for skill maintainers.
+
+### Optional BM25 Gate
+
+BM25 is optional and user-controlled. It is a local, rebuildable full-text search layer for larger wikis. It helps the LLM find relevant wiki passages; it does not replace the wiki or the LLM's judgment.
+
+At the beginning of ingest, batch ingest, query, lint, and explicit "compile wiki" operations:
+
+1. Apply `EXTEND.md`
+2. If `bm25.mode` is `off` or `manual`, do not prompt automatically
+3. If `bm25.mode` is `auto_prompt`, compute the wiki scale signals from `references/config/extend-schema.md`
+4. If thresholds are reached, ask whether to initialize BM25
+5. Only if the user answers yes, follow [references/workflows/bm25.md](references/workflows/bm25.md)
+
+When initializing BM25, create:
+
+```text
+scripts/wiki_fts.py
+indexes/
+indexes/README.md
+exports/
+```
+
+Use:
+
+- [references/templates/wiki_fts.py](references/templates/wiki_fts.py) for `scripts/wiki_fts.py`
+- [references/templates/bm25-readme.md](references/templates/bm25-readme.md) for `indexes/README.md`
+
+After setup, run:
+
+```bash
+python scripts/wiki_fts.py doctor
+python scripts/wiki_fts.py build
+python scripts/wiki_fts.py stats
+python scripts/wiki_fts.py search "{known wiki term}" --limit 5
+python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+```
 
 ## Design Principles
 

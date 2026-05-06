@@ -8,13 +8,29 @@ User asks a question about the wiki's domain. No special command needed — any 
 
 ## Core Sequence
 
+### Step 0: Preferences and Search Gate
+
+Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
+
+If `bm25.mode: auto_prompt`, check configured thresholds. If reached and BM25 is not initialized, ask whether to initialize it. If the user agrees, follow `references/workflows/bm25.md`.
+
 ### Step 1: Navigate via Index
 
 Read `wiki/index.md`. Identify all pages potentially relevant to the query. If the wiki has a search tool configured, use it instead.
 
+If BM25 is enabled, use it after reading the index:
+
+```bash
+python scripts/wiki_fts.py search "{user question or extracted query terms}" --limit 10
+```
+
+BM25 returns candidate chunks only. Do not answer from snippets alone. Open the returned pages and read the full relevant context.
+
 ### Step 2: Read Relevant Pages
 
 Read identified pages. If a page references other pages that seem relevant, follow those links too. Stop when you have sufficient context or have read 15+ pages (at which point, work with what you have).
+
+If BM25 is unavailable, stale, or returns no useful results, fall back to `rg` plus `wiki/index.md` when `fallback_to_rg: true`.
 
 ### Step 3: Synthesize Answer
 
