@@ -46,6 +46,9 @@ pip-delete-this-directory.txt
 # Local notebooks and tools
 .ipynb_checkpoints/
 
+# Local skill test output
+.skill-test/
+
 # OS/editor files
 .DS_Store
 Thumbs.db

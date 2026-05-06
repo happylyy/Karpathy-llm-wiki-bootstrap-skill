@@ -305,19 +305,19 @@ exports/                # rebuildable exports, ignored by git
 Common commands:
 
 ```bash
-python scripts/wiki_fts.py doctor
-python scripts/wiki_fts.py build
-python scripts/wiki_fts.py rebuild
-python scripts/wiki_fts.py search "query text" --limit 10
-python scripts/wiki_fts.py stats
+python3 scripts/wiki_fts.py doctor
+python3 scripts/wiki_fts.py build
+python3 scripts/wiki_fts.py rebuild
+python3 scripts/wiki_fts.py search "query text" --limit 10
+python3 scripts/wiki_fts.py stats
 ```
 
 Full export:
 
 ```bash
-python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
-python scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
-python scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
+python3 scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+python3 scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
+python3 scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
 ```
 
 Exports contain indexed chunks and metadata, not static BM25 scores. BM25 scores are computed per query. Treat `fts.sqlite` and exported files as sensitive if the wiki contains private material.

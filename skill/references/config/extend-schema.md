@@ -121,4 +121,4 @@ bm25:
 
 Do not write operational state such as index freshness here. Store operational
 events in `wiki/log.md` and derive freshness from file modification times or
-`python scripts/wiki_fts.py stats`.
+`python3 scripts/wiki_fts.py stats`.

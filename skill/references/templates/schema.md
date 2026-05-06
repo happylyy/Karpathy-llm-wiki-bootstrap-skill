@@ -10,7 +10,7 @@ You own the `wiki/` directory entirely — create, update, and delete pages as n
 
 ## Directory Layout
 
-```
+```text
 raw/            # Source documents (read-only)
 raw/assets/     # Images and attachments
 wiki/           # Your pages (read-write)
@@ -22,7 +22,7 @@ wiki/overview.md # High-level synthesis — revise as understanding deepens
 ## Page Types
 
 | Type | Filename pattern | Purpose |
-|------|-----------------|---------|
+| --- | --- | --- |
 | Source summary | `wiki/sources/{slug}.md` | One per ingested source. Key claims, data, quotes. |
 | Entity | `wiki/entities/{name}.md` | Person, org, place, product — anything with identity. |
 | Concept | `wiki/concepts/{name}.md` | Idea, theory, framework, method. |
@@ -48,6 +48,7 @@ tags: [tag1, tag2]
 ```
 
 Body conventions:
+
 - Use `[[wikilink]]` syntax for internal cross-references
 - Cite sources inline: `[Source Title](../sources/{slug}.md)`
 - Flag contradictions explicitly: `> ⚠️ CONTRADICTION: Source A claims X, Source B claims Y.`
@@ -62,6 +63,7 @@ Before any operation, check for `EXTEND.md` preferences using the priority order
 Trigger: user adds a file to `raw/` and says "ingest {filename}".
 
 Protocol:
+
 1. Read the source file completely
 2. Discuss key takeaways with user (2-3 bullet points, ask if emphasis is correct)
 3. Create `wiki/sources/{slug}.md` — structured summary with claims, data, quotes
@@ -70,13 +72,15 @@ Protocol:
 6. Check for contradictions with existing wiki content — flag in both pages
 7. Update `wiki/index.md` — add entry under correct category
 8. Append to `wiki/log.md`:
-   ```
+
+   ```text
    ## [{DATE}] ingest | {Source Title}
    - Summary: wiki/sources/{slug}.md
    - Updated: {list of touched pages}
    - New pages: {list of created pages}
    - Contradictions: {list or "none"}
    ```
+
 9. Review `wiki/overview.md` — if the new source changes the big picture, revise it
 
 ### Query
@@ -84,6 +88,7 @@ Protocol:
 Trigger: user asks a question about the wiki's domain.
 
 Protocol:
+
 1. Read `wiki/index.md` to locate relevant pages
 2. Read the relevant pages
 3. Synthesize an answer with inline citations to wiki pages
@@ -96,6 +101,7 @@ Protocol:
 Trigger: user says "lint", "health check", or "review wiki".
 
 Protocol:
+
 1. Read `wiki/index.md` and all listed pages
 2. Check for:
    - Contradictions between pages (flag with specific quotes)
@@ -107,7 +113,8 @@ Protocol:
 3. Output a lint report as a numbered list
 4. Ask user which items to fix
 5. Execute fixes, update log:
-   ```
+
+   ```text
    ## [{DATE}] lint
    - Issues found: {count}
    - Fixed: {list}
@@ -122,10 +129,10 @@ BM25 is optional, configurable through `EXTEND.md`, and never a source of truth.
 
 If BM25 is enabled:
 
-1. For query, read `wiki/index.md`, run `python scripts/wiki_fts.py search "{query}" --limit 10`, open returned pages, then answer with wiki citations.
+1. For query, read `wiki/index.md`, run `python3 scripts/wiki_fts.py search "{query}" --limit 10`, open returned pages, then answer with wiki citations.
 2. For ingest, search BM25 before creating new entity, concept, comparison, synthesis, or domain-specific pages, so duplicate pages are avoided.
-3. After ingest, run `python scripts/wiki_fts.py build` if `auto_rebuild_after_ingest` is enabled in `EXTEND.md`.
-4. For lint, run `python scripts/wiki_fts.py stats`; if the index is stale, rebuild or record a warning.
+3. After ingest, run `python3 scripts/wiki_fts.py build` if `auto_rebuild_after_ingest` is enabled in `EXTEND.md`.
+4. For lint, run `python3 scripts/wiki_fts.py stats`; if the index is stale, rebuild or record a warning.
 5. If BM25 fails and preferences allow fallback, continue with `wiki/index.md` and `rg`.
 
 ## Index Protocol
@@ -162,7 +169,7 @@ Update on every ingest. Keep entries sorted alphabetically within each section.
 
 `wiki/log.md` is append-only. Every operation adds an entry. Format:
 
-```
+```text
 ## [YYYY-MM-DD] {operation} | {subject}
 - {details as bullet points}
 ```

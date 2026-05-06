@@ -97,7 +97,7 @@ def ensure_fts5() -> None:
 
 def require_index() -> None:
     if not DB_PATH.exists():
-        raise SystemExit("No BM25 index found. Run: python scripts/wiki_fts.py build")
+        raise SystemExit("No BM25 index found. Run: python3 scripts/wiki_fts.py build")
 
 
 def validate_chunk_options(max_chars: int, overlap_chars: int) -> None:
@@ -475,13 +475,15 @@ def command_export(args: argparse.Namespace) -> None:
             file.write("# BM25 Index Export\n\n")
             file.write(f"- Chunks: {len(rows)}\n")
             file.write(f"- Database: `{DB_PATH.relative_to(ROOT)}`\n\n")
-            for row in rows:
+            for index, row in enumerate(rows):
                 item = dict(zip(EXPORT_FIELDS, row))
-                file.write(f"## {item['title']}\n\n")
+                file.write(f"## {item['title']} - {item['chunk_id']}\n\n")
                 file.write(f"- Path: `{item['page_path']}`\n")
                 file.write(f"- Heading: {item['heading_path']}\n")
                 file.write(f"- Chunk: `{item['chunk_id']}`\n\n")
-                file.write(f"{item['text']}\n\n")
+                file.write(f"{item['text'].rstrip()}\n")
+                if index < len(rows) - 1:
+                    file.write("\n")
     else:
         raise SystemExit(f"Unsupported export format: {args.format}")
 

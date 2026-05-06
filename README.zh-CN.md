@@ -305,19 +305,19 @@ exports/                # 可再生导出，默认不提交 git
 常用命令：
 
 ```bash
-python scripts/wiki_fts.py doctor
-python scripts/wiki_fts.py build
-python scripts/wiki_fts.py rebuild
-python scripts/wiki_fts.py search "query text" --limit 10
-python scripts/wiki_fts.py stats
+python3 scripts/wiki_fts.py doctor
+python3 scripts/wiki_fts.py build
+python3 scripts/wiki_fts.py rebuild
+python3 scripts/wiki_fts.py search "query text" --limit 10
+python3 scripts/wiki_fts.py stats
 ```
 
 全量导出：
 
 ```bash
-python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
-python scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
-python scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
+python3 scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+python3 scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
+python3 scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
 ```
 
 导出内容是索引语料和元数据，不是固定 BM25 排名。BM25 分数依赖具体 query，会在查询时计算。如果 wiki 里有私密资料，请把 `fts.sqlite` 和 `exports/*` 当作敏感文件处理。

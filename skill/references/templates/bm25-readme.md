@@ -39,19 +39,19 @@ BM25 is a retrieval helper. The wiki remains the source of truth.
 Run commands from the wiki root:
 
 ```bash
-python scripts/wiki_fts.py doctor
-python scripts/wiki_fts.py build
-python scripts/wiki_fts.py rebuild
-python scripts/wiki_fts.py search "query text" --limit 10
-python scripts/wiki_fts.py stats
+python3 scripts/wiki_fts.py doctor
+python3 scripts/wiki_fts.py build
+python3 scripts/wiki_fts.py rebuild
+python3 scripts/wiki_fts.py search "query text" --limit 10
+python3 scripts/wiki_fts.py stats
 ```
 
 Export the full indexed corpus:
 
 ```bash
-python scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
-python scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
-python scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
+python3 scripts/wiki_fts.py export --format jsonl --out exports/bm25-chunks.jsonl
+python3 scripts/wiki_fts.py export --format csv --out exports/bm25-chunks.csv
+python3 scripts/wiki_fts.py export --format markdown --out exports/bm25-report.md
 ```
 
 The export contains chunks, metadata, and text. BM25 scores are not exported
@@ -88,7 +88,7 @@ distribution with SQLite FTS5 enabled, or continue with `index.md + rg`.
 If `stats` says `Fresh: no`, rebuild:
 
 ```bash
-python scripts/wiki_fts.py rebuild
+python3 scripts/wiki_fts.py rebuild
 ```
 
 If search returns nothing, try exact terms from the wiki, product names, paper
