@@ -1,103 +1,103 @@
-# Query Workflow — Reference
+# Query 工作流 — 参考
 
-Detailed protocol for answering questions against the wiki and optionally filing answers as new pages.
+依据 wiki 回答问题，并可选择将答案归档为新页面的详细协议。
 
-## Trigger
+## 触发条件
 
-User asks a question about the wiki's domain. No special command needed — any question triggers this workflow.
+用户询问 wiki 领域内的问题。无需特殊命令——任何问题都会触发此工作流。
 
-## Core Sequence
+## 核心流程
 
-### Step 0: Preferences and Search Gate
+### 步骤 0：偏好与搜索门控
 
-Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
+使用 `references/config/extend-schema.md` 加载 `EXTEND.md` 偏好。如果不存在偏好文件，先完成首次偏好设置。
 
-If `bm25.mode: auto_prompt`, check configured thresholds. If reached and BM25 is not initialized, ask whether to initialize it. If the user agrees, follow `references/workflows/bm25.md`.
+如果 `bm25.mode: auto_prompt`，检查配置的阈值。如果达到阈值且尚未初始化 BM25，询问是否初始化。用户同意后，遵循 `references/workflows/bm25.md`。
 
-### Step 1: Navigate via Index
+### 步骤 1：通过索引导航
 
-Read `wiki/index.md`. For conceptual, relationship, taxonomy, or landscape questions, also read `wiki/concept-table.md` before choosing pages. Identify pages potentially relevant to the query. If BM25 is configured, use it as an additional candidate finder after reading the index, not as a replacement for the index.
+读取 `wiki/index.md`。对于概念、关系、分类或全局性问题，在选择页面前还要读取 `wiki/concept-table.md`。找出可能与查询相关的页面。如果配置了 BM25，在读取索引后将其作为额外的候选查找工具，而不是索引的替代品。
 
-If BM25 is enabled, use it after reading the index:
+如果已启用 BM25，在读取索引后使用它：
 
 ```bash
 python3 scripts/wiki_fts.py stats
 python3 scripts/wiki_fts.py search "{user question or extracted query terms}" --limit 10
 ```
 
-If `stats` reports `Fresh: no`, run `python3 scripts/wiki_fts.py rebuild` before searching. If rebuild fails and `fallback_to_rg: true`, continue with `rg` plus `wiki/index.md`.
+如果 `stats` 报告 `Fresh: no`，搜索前运行 `python3 scripts/wiki_fts.py rebuild`。如果重建失败且 `fallback_to_rg: true`，继续使用 `rg` 和 `wiki/index.md`。
 
-BM25 returns candidate chunks only. Do not answer from snippets alone. Open the returned pages and read the full relevant context.
+BM25 只返回候选文本块。不要仅根据摘要片段回答；打开返回的页面并阅读全文中的相关上下文。
 
-### Step 2: Read Relevant Pages
+### 步骤 2：读取相关页面
 
-Read identified pages. If a page references other pages that seem relevant, follow those links too. Stop when you have sufficient context or have read 15+ pages (at which point, work with what you have).
+读取已确定的页面。如果页面引用了其他可能相关的页面，也继续读取。获得足够上下文或已经读取 15 个以上页面时停止；达到后者时，使用已有信息完成工作。
 
-If BM25 is unavailable, stale, or returns no useful results, fall back to `rg` plus `wiki/index.md` when `fallback_to_rg: true`.
+如果 BM25 不可用、已过期或没有返回有用结果，并且 `fallback_to_rg: true`，则回退到 `rg` 和 `wiki/index.md`。
 
-### Step 3: Synthesize Answer
+### 步骤 3：综合答案
 
-Compose an answer that:
+组织答案时：
 
-- Directly addresses the user's question
-- Cites wiki pages inline: `[Page Title](wiki/path/to/page.md)`
-- Notes confidence level: high (multiple corroborating sources), medium (single source), low (inference)
-- Flags if the wiki lacks sufficient information to fully answer
+- 直接回答用户的问题
+- 使用 wiki 页面内联引用：`[Page Title](wiki/path/to/page.md)`（页面标题可按实际内容替换）
+- 标明置信度：高（多个来源相互印证）、中（单一来源）、低（推断）
+- 如果 wiki 中没有足够信息完整作答，明确指出
 
-### Step 4: File Decision
+### 步骤 4：归档决策
 
-After answering, assess: is this answer a valuable artifact worth preserving?
+回答后评估：这个答案是否是值得保存的有价值成果？
 
-**File-worthy signals**:
+**值得归档的信号**：
 
-- Comparison or analysis the user is likely to revisit
-- New connection discovered between existing concepts
-- Synthesis across 3+ sources
-- Answer fills a gap in the wiki's coverage
+- 用户可能再次查看的比较或分析
+- 在现有概念之间发现了新联系
+- 综合了 3 个以上来源
+- 答案填补了 wiki 的覆盖缺口
 
-**Not file-worthy**:
+**不值得归档的情形**：
 
-- Simple factual lookups
-- Clarifying questions about wiki structure
-- Trivial or one-off queries
+- 简单事实查询
+- 关于 wiki 结构的澄清问题
+- 琐碎或一次性查询
 
-If file-worthy, ask user: "This analysis seems worth keeping. File as `wiki/{type}/{slug}.md`?"
+如果值得归档，询问用户：“这份分析值得保留。是否归档为 `wiki/{type}/{slug}.md`？”
 
-If user agrees:
+如果用户同意：
 
-1. Create the page with proper frontmatter
-2. Add cross-references to/from related pages
-3. Update `wiki/concept-table.md` if the filed answer creates, renames, merges, splits, or materially revises durable concepts
-4. Update `wiki/index.md`
-5. Append to `wiki/log.md`:
+1. 使用正确的 frontmatter 创建页面
+2. 添加与相关页面之间的双向引用
+3. 如果归档的答案创建、重命名、合并、拆分或实质性修订了持久概念，更新 `wiki/concept-table.md`
+4. 更新 `wiki/index.md`
+5. 向 `wiki/log.md` 追加：
 
    ```text
    ## [{date}] query-filed | {title}
-   - Question: {original question}
-   - Filed as: wiki/{type}/{slug}.md
-   - Related pages: {list}
+   - 问题：{original question}
+   - 归档位置：wiki/{type}/{slug}.md
+   - 相关页面：{list}
    ```
 
-## Answer Formats
+## 答案格式
 
-Adapt output format to the question type:
+根据问题类型调整输出格式：
 
-| Question Type | Format |
+| 问题类型 | 格式 |
 | --- | --- |
-| "What is X?" | Prose explanation, 1-3 paragraphs |
-| "Compare X and Y" | Markdown table with dimensions as rows |
-| "What do we know about X?" | Structured summary with source citations |
-| "What are the open questions on X?" | Numbered list with confidence assessments |
-| "Summarize the state of X" | Section-based overview with key claims |
-| "Timeline of X" | Chronological list or table |
+| “X 是什么？” | 1–3 段文字说明 |
+| “比较 X 和 Y” | 以比较维度为行的 Markdown 表格 |
+| “关于 X，我们知道什么？” | 带来源引用的结构化摘要 |
+| “关于 X 有哪些开放问题？” | 带置信度评估的编号列表 |
+| “总结 X 的现状” | 按小节组织、包含关键主张的概览 |
+| “X 的时间线” | 按时间顺序排列的列表或表格 |
 
-## When Wiki Cannot Answer
+## Wiki 无法回答时
 
-If the wiki lacks information:
+如果 wiki 缺少信息：
 
-1. State clearly what's missing
-2. Suggest sources that might fill the gap (web search, specific documents)
-3. Optionally: create a stub page noting the knowledge gap
+1. 明确说明缺少什么
+2. 建议可能填补缺口的来源（网络搜索、具体文档）
+3. 可选择创建一个记录知识缺口的占位页面：
 
    ```yaml
    ---

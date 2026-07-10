@@ -1,136 +1,136 @@
-# Lint Workflow — Reference
+# Lint 工作流 — 参考
 
-Detailed protocol for wiki health checks. Catches structural issues, contradictions, and knowledge gaps.
+Wiki 健康检查的详细协议，用于发现结构问题、矛盾和知识缺口。
 
-## Trigger
+## 触发条件
 
-User says "lint", "health check", "review wiki", "check consistency", or "wiki maintenance".
+用户说“lint”“health check”“review wiki”“check consistency”“wiki maintenance”，或对应的中文表达。
 
-## Core Sequence
+## 核心流程
 
-### Step 0: Preferences and Search Gate
+### 步骤 0：偏好与搜索门控
 
-Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
+使用 `references/config/extend-schema.md` 加载 `EXTEND.md` 偏好。如果不存在偏好文件，先完成首次偏好设置。
 
-If `bm25.mode: auto_prompt`, check configured thresholds. If reached and BM25 is not initialized, ask whether to initialize it. If the user agrees, follow `references/workflows/bm25.md`.
+如果 `bm25.mode: auto_prompt`，检查配置的阈值。如果达到阈值且尚未初始化 BM25，询问是否初始化。用户同意后，遵循 `references/workflows/bm25.md`。
 
-### Step 1: Full Scan
+### 步骤 1：完整扫描
 
-Read `wiki/index.md` and `wiki/concept-table.md`, then read every page listed. Build an internal model of:
+读取 `wiki/index.md` 和 `wiki/concept-table.md`，然后读取其中列出的每个页面。构建包含以下内容的内部模型：
 
-- All pages and their types
-- All `[[wikilinks]]` and their targets
-- All `sources` frontmatter entries
-- All contradiction blocks
-- All tags
-- All concept table rows, statuses, related pages, and maintenance notes
+- 所有页面及其类型
+- 所有 `[[wikilinks]]` 及其目标
+- 所有 `sources` frontmatter 条目
+- 所有矛盾块
+- 所有标签
+- 概念表中的所有行、状态、相关页面和维护备注
 
-If BM25 is enabled, also run:
+如果已启用 BM25，还要运行：
 
 ```bash
 python3 scripts/wiki_fts.py stats
 ```
 
-Record whether the index is fresh.
+记录索引是否为最新。
 
-### Step 2: Run Checks
+### 步骤 2：执行检查
 
-Execute each check category. Collect findings as a numbered list.
+执行各类检查，并将发现收集为编号列表。
 
-#### 2.1 Structural Checks
+#### 2.1 结构检查
 
-| Check | Issue | Severity |
+| 检查项 | 问题 | 严重程度 |
 | --- | --- | --- |
-| Orphan pages | Page exists but no other page links to it | Medium |
-| Broken wikilinks | `[[target]]` has no matching file | High |
-| Missing pages | Concept/entity mentioned 3+ times across pages but has no dedicated page | Medium |
-| Index drift | Page exists in `wiki/` but not listed in `index.md` | High |
-| Concept table drift | Concept page exists without a row, row points to a missing concept page, or row definition/status conflicts with the page | Medium |
-| Empty pages | Page has frontmatter but no meaningful body content | Low |
+| 孤立页面 | 页面存在，但没有其他页面链接到它 | 中 |
+| 损坏的 wikilink | `[[target]]` 没有对应文件 | 高 |
+| 缺失页面 | 某个概念／实体在页面中出现 3 次以上，但没有专用页面 | 中 |
+| 索引漂移 | 页面存在于 `wiki/`，但未列在 `index.md` 中 | 高 |
+| 概念表漂移 | 概念页面没有对应行、行指向不存在的概念页面，或行中的定义／状态与页面冲突 | 中 |
+| 空页面 | 页面有 frontmatter，但没有有意义的正文内容 | 低 |
 
-#### 2.2 Content Checks
+#### 2.2 内容检查
 
-| Check | Issue | Severity |
+| 检查项 | 问题 | 严重程度 |
 | --- | --- | --- |
-| Unresolved contradictions | Contradiction block with `Resolution: pending` older than 2 ingests | Medium |
-| Stale claims | Page claims X, but a newer source (by date) contradicts it without the page being updated | High |
-| Single-source concepts | Concept page backed by only 1 source | Low |
-| Stale concept table status | Concept row status or maintenance note is no longer supported by the concept page and sources | Medium |
-| Outdated overview | `wiki/overview.md` not updated since 3+ ingests ago | Medium |
+| 未解决的矛盾 | 带有 `Resolution: pending` 的矛盾块已经超过 2 次 ingest 仍未解决 | 中 |
+| 过时主张 | 页面声称 X，但日期更新的来源与之矛盾，而页面尚未更新 | 高 |
+| 单一来源概念 | 概念页面仅由 1 个来源支持 | 低 |
+| 过时的概念表状态 | 概念行的状态或维护备注不再受到概念页面和来源支持 | 中 |
+| 过时的概览 | `wiki/overview.md` 已经超过 3 次 ingest 未更新 | 中 |
 
-#### 2.3 Cross-reference Checks
+#### 2.3 交叉引用检查
 
-| Check | Issue | Severity |
+| 检查项 | 问题 | 严重程度 |
 | --- | --- | --- |
-| Missing backlinks | Page A links to Page B, but B doesn't link back to A (when topically relevant) | Low |
-| Isolated clusters | Groups of pages that link to each other but not to the rest of the wiki | Medium |
-| Tag inconsistency | Same concept tagged differently across pages | Low |
+| 缺少反向链接 | 页面 A 链接到页面 B，但在主题相关时 B 没有链接回 A | 低 |
+| 孤立集群 | 一组页面彼此链接，但与 wiki 其余部分没有连接 | 中 |
+| 标签不一致 | 同一概念在不同页面使用不同标签 | 低 |
 
-#### 2.4 Search Layer Checks
+#### 2.4 搜索层检查
 
-| Check | Issue | Severity |
+| 检查项 | 问题 | 严重程度 |
 | --- | --- | --- |
-| Stale BM25 index | `python3 scripts/wiki_fts.py stats` reports `Fresh: no` | Medium |
-| Missing BM25 files | Preferences require or enable BM25 but `scripts/wiki_fts.py` or `indexes/README.md` is missing | High |
-| Repeated unlinked term | BM25/`rg` finds a concept title in 3+ pages without wikilinks | Low |
-| Duplicate candidates | Similar page titles or repeated exact terms suggest duplicate pages | Medium |
+| BM25 索引过期 | `python3 scripts/wiki_fts.py stats` 报告 `Fresh: no` | 中 |
+| 缺少 BM25 文件 | 偏好要求或启用了 BM25，但缺少 `scripts/wiki_fts.py` 或 `indexes/README.md` | 高 |
+| 重复且未链接的术语 | BM25／`rg` 在 3 个以上页面找到概念标题，但这些位置没有 wikilink | 低 |
+| 潜在重复页面 | 相似页面标题或重复的精确术语表明可能存在重复页面 | 中 |
 
-### Step 3: Report
+### 步骤 3：报告
 
-Output findings grouped by severity:
+按严重程度分组输出发现：
 
 ```markdown
-## Wiki Lint Report — {date}
+## Wiki Lint 报告 — {date}
 
-### High ({count})
-1. {finding with specific file references}
+### 高（{count}）
+1. {包含具体文件引用的发现}
 ...
 
-### Medium ({count})
+### 中（{count}）
 1. ...
 
-### Low ({count})
+### 低（{count}）
 1. ...
 
-### Suggestions
-- {Proactive recommendations: topics to explore, sources to find, pages to create}
+### 建议
+- {主动建议：值得探索的主题、需要寻找的来源、需要创建的页面}
 ```
 
-### Step 4: Triage
+### 步骤 4：分诊
 
-Ask user: "Which items should I fix now?" Accept:
+询问用户：“现在应修复哪些项目？”接受：
 
-- "All" — fix everything
-- "High only" — fix high-severity items
-- Specific numbers — "Fix 1, 3, 7"
-- "None" — just log the report
+- “全部”——修复所有问题
+- “仅高严重程度”——只修复高严重程度问题
+- 指定编号——“修复 1、3、7”
+- “不修复”——仅记录报告
 
-### Step 5: Execute Fixes
+### 步骤 5：执行修复
 
-For each approved fix:
+对每个获准修复的项目：
 
-- Create/update pages as needed
-- Update cross-references
-- Resolve contradictions if newer data is clear
-- Update `wiki/index.md`
-- Rebuild BM25 if enabled and wiki pages changed
+- 按需创建或更新页面
+- 更新交叉引用
+- 如果较新的数据结论明确，则解决矛盾
+- 更新 `wiki/index.md`
+- 如果已启用 BM25 且 wiki 页面发生变化，重建 BM25
 
-### Step 6: Log
+### 步骤 6：记录日志
 
-Append to `wiki/log.md`:
+向 `wiki/log.md` 追加：
 
 ```text
 ## [{date}] lint
-- Total issues: {count}
-- High: {count}, Medium: {count}, Low: {count}
-- Fixed: {list of fixed items}
-- Deferred: {list of deferred items}
+- 问题总数：{count}
+- 高：{count}，中：{count}，低：{count}
+- 已修复：{list of fixed items}
+- 已推迟：{list of deferred items}
 ```
 
-## Suggested Lint Schedule
+## 建议的 Lint 频率
 
-| Wiki Size | Recommended Frequency |
+| Wiki 规模 | 建议频率 |
 | --- | --- |
-| < 10 sources | After every 3 ingests |
-| 10-50 sources | Weekly or after every 5 ingests |
-| 50+ sources | After every 10 ingests, or when queries return inconsistent results |
+| 少于 10 个来源 | 每 3 次 ingest 后 |
+| 10–50 个来源 | 每周或每 5 次 ingest 后 |
+| 50 个以上来源 | 每 10 次 ingest 后，或查询返回不一致结果时 |

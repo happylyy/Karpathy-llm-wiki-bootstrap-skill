@@ -1,90 +1,90 @@
-# Ingest Workflow — Reference
+# Ingest 工作流 — 参考
 
-Detailed protocol for ingesting a new source into the wiki. The schema file contains a condensed version; this document covers edge cases and rationale.
+将新来源提取进 wiki 的详细协议。schema 文件包含精简版本；本文档覆盖边界情况和设计理由。
 
-## Trigger
+## 触发条件
 
-User adds a file to `raw/` and instructs the LLM to process it. Trigger phrases: "ingest", "process", "add this source", "read this and update the wiki".
+用户将文件添加到 `raw/`，并指示 LLM 处理该文件。触发短语包括："ingest"（提取）、"process"（处理）、"add this source"（添加这个来源）、"read this and update the wiki"（阅读这个并更新 wiki）。
 
-## Pre-flight Checks
+## 预检
 
-0. Load `EXTEND.md` preferences using `references/config/extend-schema.md`. If no preference file exists, run first-time preference setup before continuing.
-1. Verify file exists in `raw/`
-2. Determine file type using this table:
+0. 使用 `references/config/extend-schema.md` 加载 `EXTEND.md` 偏好设置。如果不存在偏好文件，先执行首次偏好设置，然后再继续。
+1. 验证文件存在于 `raw/`
+2. 使用下表判断文件类型：
 
-| Type | Action |
-| --- | --- |
-| Markdown / text | Read directly |
-| PDF | Extract text (ask user for tool if unavailable) |
-| Image | Describe contents, note as visual source |
-| CSV / JSON | Summarize structure and key data points |
-| Other | Ask user how to handle |
+| 类型            | 操作                                             |
+| --------------- | ------------------------------------------------ |
+| Markdown／文本  | 直接读取                                         |
+| PDF             | 提取文本（如果工具不可用，询问用户使用哪个工具） |
+| 图片            | 描述内容，并标记为视觉来源                       |
+| CSV / JSON      | 总结结构和关键数据点                             |
+| 其他            | 询问用户如何处理                                 |
 
-1. Check `wiki/log.md` — has this source been ingested before? If yes, ask user: "This source was ingested on {date}. Re-ingest (update) or skip?"
-2. If `bm25.mode: auto_prompt`, check whether the wiki has crossed the configured BM25 thresholds. If yes, ask whether to initialize BM25 before ingest. If the user agrees, follow `references/workflows/bm25.md`.
+1. 检查 `wiki/log.md`：这个来源是否以前已经提取过？如果是，询问用户："此来源已于 {date} 提取。要重新提取（更新）还是跳过？"
+2. 如果 `bm25.mode: auto_prompt`，检查 wiki 是否已达到配置的 BM25 阈值。如果达到，询问是否在提取前初始化 BM25。如果用户同意，遵循 `references/workflows/bm25.md`。
 
-## Core Sequence
+## 核心流程
 
-### Step 1: Read and Comprehend
+### 步骤 1：读取并理解
 
-Read the entire source. Produce internal notes (not written to file):
+阅读全文来源。生成内部笔记（不写入文件）：
 
-- **Primary language** of the source (e.g. Chinese, English, Japanese). All wiki pages created or updated from this source MUST be written in this language. Structural elements (YAML keys, `type` values, filenames, table column headers, section headings in index/log) stay in English.
-- 3-5 key claims or data points
-- Named entities (people, orgs, products, places)
-- Concepts and frameworks introduced
-- Anything that contradicts or extends existing wiki knowledge
+- 来源的**主要语言**（例如中文、英文、日文）。所有由该来源创建或更新的 wiki 页面 MUST 使用该语言编写。结构性元素（YAML 键、`type` 值、文件名、表格列标题、index/log 中的章节标题）保持中文。
+- 3-5 条关键主张或数据点
+- 命名实体（人物、组织、产品、地点）
+- 引入的概念和框架
+- 任何与现有 wiki 知识矛盾或扩展现有知识的内容
 
-### Step 2: Discuss with User
+### 步骤 2：与用户讨论
 
-Present 2-3 bullet summary of key takeaways. Ask:
+用 2-3 个要点呈现关键收获摘要。询问：
 
-- "Anything I should emphasize or de-emphasize?"
-- "Any corrections to my reading?"
+- "有什么我应该强调或弱化的吗？"
+- "我对内容的理解有什么需要纠正的吗？"
 
-This step is skippable if user says "ingest silently" or "batch ingest".
+如果用户说 "ingest silently"（直接提取）或 "batch ingest"（批量提取），此步骤可以跳过。
 
-### Step 3: Create Source Summary Page
+### 步骤 3：创建来源摘要页
 
-Write `wiki/sources/{slug}.md`:
+写入 `wiki/sources/{slug}.md`：
 
 ```yaml
 ---
 title: "{source title}"
 type: source-summary
-created: {date}
-updated: {date}
-sources: [{filename}]
-tags: [{auto-generated tags}]
+created: { date }
+updated: { date }
+sources: [{ filename }]
+tags: [{ auto-generated tags }]
 ---
 ```
 
-Note: `sources` uses filenames only (e.g. `[article.md]`), not full paths like `raw/article.md`.
+注意：`sources` 只使用文件名（例如 `[article.md]`），不要使用 `raw/article.md` 这样的完整路径。
 
-Body structure:
+正文结构：
 
-1. **Summary** — 2-3 paragraph overview
-2. **Key Claims** — numbered list with inline quotes
-3. **Entities Mentioned** — list with wikilinks
-4. **Concepts** — list with wikilinks
-5. **Notable Quotes** — verbatim with page/section references
-6. **Limitations / Bias** — note if single-perspective, dated, etc.
+1. **摘要**——2–3 段概览
+2. **关键主张**——带行内引用的编号列表
+3. **提及的实体**——带 wikilink 的列表
+4. **相关概念**——带 wikilink 的列表
+5. **重要引文**——逐字引用，并标明页码／章节
+6. **局限／偏见**——如果是单一视角、信息过时等情况，在此说明
 
-### Step 4: Ripple Updates
+### 步骤 4：连锁更新
 
-For each entity and concept the source touches:
+对该来源（source）触及的每个实体（entity）和概念（concept）：
 
-- If BM25 is enabled, search for existing related pages before creating new pages:
+- 如果 BM25 已启用，在创建新页面前搜索现有相关页面：
 
   ```bash
   python3 scripts/wiki_fts.py search "{candidate entity or concept}" --limit 10
   ```
 
-- If page exists → add new information, update `sources` frontmatter, revise summary if needed
-- If page doesn't exist → create it with information from this source
-- If source contradicts existing content → add contradiction block to both pages
+- 如果页面已存在 -> 添加新信息，更新 `sources` frontmatter，并在需要时修订摘要
+- 如果页面不存在 -> 使用该来源中的信息创建页面
+- 如果来源与现有内容矛盾 -> 在两个页面中都添加矛盾块
 
-**Contradiction format**:
+**矛盾格式**（标记与状态值保持原样）：
 
 ```markdown
 > ⚠️ CONTRADICTION (added {date})
@@ -93,65 +93,63 @@ For each entity and concept the source touches:
 > Resolution: {pending | Source B supersedes (newer data) | both valid in different contexts}
 ```
 
-### Step 5: Update Concept Table
+### 步骤 5：更新概念表
 
-Update `wiki/concept-table.md` for every concept created, renamed, merged,
-split, deleted, or materially revised during ingest.
+对提取期间创建、重命名、合并、拆分、删除或实质性修订的每个概念，更新 `wiki/concept-table.md`。
 
-For each concept row, keep these fields current:
+对每个概念行，保持这些字段为最新：
 
-| Field | Maintenance rule |
-| --- | --- |
-| `Concept` | Link to the durable concept page under `wiki/concepts/`. |
-| `Working definition` | One concise, evidence-aware definition. |
-| `Role in this wiki` | Why the concept matters to the current knowledge base. |
-| `Sources` | Source filenames only, matching page frontmatter style. |
-| `Related pages` | Important concepts, entities, comparisons, or synthesis pages. |
-| `Status` | `high confidence`, `single-source`, `tentative`, `needs sources`, or `contradicted`. |
-| `Maintenance note` | What future ingest or lint should watch for. |
+| 字段                 | 维护规则                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `Concept`            | 链接到 `wiki/concepts/` 下的持久概念页。                                             |
+| `Working definition` | 一个简洁，证据清晰的定义。                                                           |
+| `Role in this wiki`  | 说明该概念为什么对当前知识库重要。                                                   |
+| `Sources`            | 仅使用来源文件名，与页面 frontmatter 风格一致。                                      |
+| `Related pages`      | 重要概念、实体、比较页或综合页。                                                     |
+| `Status`             | `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted`。 |
+| `Maintenance note`   | 未来提取或 lint 应该关注的事项。                                                     |
 
-Keep concept rows sorted alphabetically. If the new source changes the concept
-landscape, also update the `Concept Clusters` section.
+保持概念行按字母顺序排序。如果新来源改变了概念版图，也要更新 `Concept Clusters` 小节。
 
-### Step 6: Update Index
+### 步骤 6：更新索引
 
-Add source entry to `wiki/index.md` Sources table. Add/update entity and concept entries.
+向 `wiki/index.md` 的 Sources 表添加来源条目。添加或更新实体和概念条目。
 
-### Step 7: Update Log
+### 步骤 7：更新日志
 
-Append structured entry to `wiki/log.md`.
+向 `wiki/log.md` 追加结构化条目。
 
-### Step 8: Revise Overview
+### 步骤 8：修订概览
 
-Re-read `wiki/overview.md` and assess whether the new source changes the big picture. If yes, revise. If no, skip. Even for small wikis, keep the overview current — a single source can reshape the narrative.
+重新阅读 `wiki/overview.md`，评估新来源是否改变整体图景。如果是，则修订。如果不是，则跳过。即使是小型 wiki，也要保持 overview 最新，因为单个来源也可能重塑叙事。
 
-### Step 9: Refresh Search Index
+### 步骤 9：刷新搜索索引
 
-If BM25 is enabled and `auto_rebuild_after_ingest: true`:
+如果 BM25 已启用且 `auto_rebuild_after_ingest: true`：
 
 ```bash
 python3 scripts/wiki_fts.py build
 python3 scripts/wiki_fts.py stats
 ```
 
-If rebuild fails, do not roll back wiki edits. Record the failure in `wiki/log.md` and fall back to `wiki/index.md` plus `rg` for subsequent navigation.
+如果重建失败，不要回滚 wiki 编辑。将失败记录到 `wiki/log.md`，并在后续导航中回退到 `wiki/index.md` 加 `rg`。
 
-## Batch Ingest
+## 批量提取
 
-When processing multiple sources at once:
+一次处理多个来源时：
 
-1. Process sequentially (not in parallel — each source may affect the next)
-2. Skip Step 2 (user discussion) unless contradictions are found
-3. Consolidate log entries into a single batch entry
-4. Revise `wiki/concept-table.md` and `wiki/overview.md` once at the end, not after each source
-5. Rebuild BM25 once at the end if enabled and configured for automatic rebuild
+1. 按顺序处理（不要并行，因为每个来源都可能影响下一个）
+2. 跳过步骤 2（用户讨论），除非发现矛盾
+3. 将日志条目合并为一个批量条目
+4. 在最后统一修订一次 `wiki/concept-table.md` 和 `wiki/overview.md`，不要在每个来源之后都修订
+5. 如果 BM25 已启用且配置为自动重建，在最后统一重建一次 BM25
 
-## Edge Cases
+## 边界情况
 
-| Situation | Resolution |
-| --- | --- |
-| Source overlaps significantly with existing source | Note overlap, only add genuinely new information |
-| Source is a primary document (e.g., legal text, spec) | Summarize but also link to raw file for exact wording |
-| Source is in a different language than existing wiki pages | Write this source's wiki pages in the source's own language. For cross-source pages that mix languages, use the majority language or ask the user. |
-| Source contains images | Describe key images in text, reference image files in `raw/assets/` |
-| Source is very long (book chapter, 50+ pages) | Break into sections, create one summary page with section headers |
+| 情形                                 | 处理方式                                                                                                 |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 来源与现有来源明显重叠               | 记录重叠，只添加真正新增的信息                                                                           |
+| 来源是原始文档（例如法律文本、规范） | 总结内容，同时链接到 raw 文件以便查看精确措辞                                                            |
+| 来源语言不同于现有 wiki 页面         | 使用该来源自身的语言编写此来源的 wiki 页面。对于混合多种语言的跨来源页面，使用多数来源语言，或询问用户。 |
+| 来源包含图片                         | 用文本描述关键图片，并引用 `raw/assets/` 中的图片文件                                                    |
+| 来源非常长（书籍章节、50+ 页）       | 分节处理，创建一个带章节标题的摘要页                                                                     |

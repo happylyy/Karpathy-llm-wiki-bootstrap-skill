@@ -1,40 +1,40 @@
-# Domain-Specific Page Types
+# 领域专用页面类型
 
-Snippets to inject into the schema's Page Types table based on the user's domain selection.
+根据用户选择的领域，将以下片段注入 schema 的页面类型表。
 
-## Book / Media
+## 书籍／媒体
 
 ```markdown
-| Character | `wiki/characters/{name}.md` | Character profile: traits, arc, relationships, key scenes. |
-| Timeline | `wiki/timeline/{event}.md` | Chronological event with date/chapter, participants, consequences. |
-| Plot thread | `wiki/threads/{name}.md` | Narrative thread tracking: introduction, development, resolution. |
-| Theme | `wiki/themes/{name}.md` | Thematic analysis with supporting quotes and scene references. |
-| Location | `wiki/locations/{name}.md` | Setting description, significance, scenes set here. |
+| 角色 | `wiki/characters/{name}.md` | 角色档案：特征、成长弧线、关系、关键场景。 |
+| 时间线 | `wiki/timeline/{event}.md` | 按时间顺序记录事件，包括日期／章节、参与者和后果。 |
+| 情节线 | `wiki/threads/{name}.md` | 跟踪叙事线索：引入、发展、解决。 |
+| 主题 | `wiki/themes/{name}.md` | 主题分析，包含支持性引文和场景引用。 |
+| 地点 | `wiki/locations/{name}.md` | 场景描述、重要性及发生于此的场景。 |
 ```
 
-## Research
+## 研究
 
 ```markdown
-| Paper summary | `wiki/papers/{slug}.md` | Structured summary: problem, method, results, limitations, citations. |
-| Claim | `wiki/claims/{slug}.md` | Specific factual claim with supporting/contradicting evidence across sources. |
-| Method | `wiki/methods/{name}.md` | Research method or technique: description, when to use, papers that employ it. |
-| Dataset | `wiki/datasets/{name}.md` | Dataset profile: size, format, source, papers that use it, known limitations. |
+| 论文摘要 | `wiki/papers/{slug}.md` | 结构化摘要：问题、方法、结果、局限和引用。 |
+| 主张 | `wiki/claims/{slug}.md` | 具体事实主张，包含不同来源中的支持证据和反对证据。 |
+| 方法 | `wiki/methods/{name}.md` | 研究方法或技术：说明、适用情形及采用该方法的论文。 |
+| 数据集 | `wiki/datasets/{name}.md` | 数据集档案：规模、格式、来源、使用它的论文及已知局限。 |
 ```
 
-## Personal
+## 个人
 
 ```markdown
-| Journal entry | `wiki/journal/{date}.md` | Daily/weekly reflection: events, insights, mood, connections to goals. |
-| Goal | `wiki/goals/{name}.md` | Goal definition, milestones, progress tracking, related journal entries. |
-| Habit | `wiki/habits/{name}.md` | Habit tracking: trigger, routine, reward, streaks, adjustments. |
-| Lesson | `wiki/lessons/{slug}.md` | Distilled insight from experience: context, lesson, application. |
+| 日志条目 | `wiki/journal/{date}.md` | 每日／每周反思：事件、见解、情绪及与目标的联系。 |
+| 目标 | `wiki/goals/{name}.md` | 目标定义、里程碑、进度跟踪及相关日志条目。 |
+| 习惯 | `wiki/habits/{name}.md` | 习惯跟踪：触发因素、惯例、奖励、连续记录和调整。 |
+| 经验 | `wiki/lessons/{slug}.md` | 从经历中提炼的见解：背景、经验和应用。 |
 ```
 
-## Business / Team
+## 企业／团队
 
 ```markdown
-| Decision log | `wiki/decisions/{slug}.md` | Decision record: context, options considered, choice made, rationale, outcome. |
-| Meeting summary | `wiki/meetings/{date}-{topic}.md` | Meeting notes: attendees, agenda, decisions, action items. |
-| Project | `wiki/projects/{name}.md` | Project overview: goals, status, key decisions, stakeholders. |
-| Stakeholder | `wiki/stakeholders/{name}.md` | Stakeholder profile: role, interests, communication preferences. |
+| 决策日志 | `wiki/decisions/{slug}.md` | 决策记录：背景、考虑过的选项、最终选择、理由和结果。 |
+| 会议摘要 | `wiki/meetings/{date}-{topic}.md` | 会议记录：参会者、议程、决策和行动项。 |
+| 项目 | `wiki/projects/{name}.md` | 项目概览：目标、状态、关键决策和利益相关者。 |
+| 利益相关者 | `wiki/stakeholders/{name}.md` | 利益相关者档案：角色、关注点和沟通偏好。 |
 ```
