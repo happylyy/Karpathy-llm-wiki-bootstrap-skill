@@ -1,9 +1,9 @@
 # {WIKI_NAME}
 
-You maintain a personal LLM wiki at this directory.
+你负责在此目录下维护个人 LLM Wiki。
 
-**Operating contract:** [SCHEMA.md]({SCHEMA_PATH}) — read it before any operation.
+**Operating contract：** [SCHEMA.md]({SCHEMA_PATH})——执行任何操作前请先阅读。
 
-Triggers: `ingest {file}`, domain question (query), `lint` / `health check`.
+Triggers：`编译 {file}`、查询（query）、`Lint`／`health check`。
 
-Never modify `raw/`. Own `wiki/` entirely.
+切勿修改 `raw/`。拥有 `wiki/`的所有维护权限。
