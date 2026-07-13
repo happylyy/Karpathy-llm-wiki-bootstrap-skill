@@ -1,25 +1,26 @@
 ---
 title: Concept Table
 type: concept-table
-created: {DATE}
-updated: {DATE}
+created: { DATE }
+updated: { DATE }
 sources: []
 tags: [concept-map, navigation, maintenance]
 ---
 
-> This table is the wiki's compressed concept map. It complements `wiki/index.md`: the index catalogs pages; this table explains what the durable concepts mean, how they relate, and what needs maintenance.
+> 此表是 Wiki 的压缩概念地图。它与 `wiki/index.md` 互为补充：索引用于编目页面；此表用于说明持久概念的含义、相互关系以及需要维护的内容。
 
-## Maintenance Rules
+## 维护规则
 
-- Keep one row for every durable concept page under `wiki/concepts/`.
-- Update this table whenever a concept page is created, renamed, deleted, merged, split, or materially revised.
-- Keep rows sorted alphabetically by concept name.
-- Keep definitions concise and evidence-aware; link to the full concept page for detail.
-- Use `Status` values such as `high confidence`, `single-source`, `tentative`, `needs sources`, or `contradicted`.
-- Column headers stay English as protocol identifiers; row content follows the language of the relevant concept page.
+- 为 `wiki/concepts/` 下的每个持久概念页面保留一行。
+- 每当创建、重命名、删除、合并、拆分或实质性修订概念页面时，更新此表。
+- 按概念名称的字母顺序排列各行。
+- 定义应简洁并体现证据情况；链接到完整的概念页面以提供详细信息。
+- `Status` 使用 `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted` 等值。
+- 列标题作为协议标识符保留英文；行内容使用相关概念页面的语言。
 
 ## Concepts
 
 | Concept | Working definition | Role in this wiki | Sources | Related pages | Status | Maintenance note |
-| --- | --- | --- | --- | --- | --- | --- |
-<!-- New concept rows go here -->
+| ------- | ------------------ | ----------------- | ------- | ------------- | ------ | ---------------- |
+
+<!-- 在此添加新的概念行 -->

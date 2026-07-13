@@ -1,19 +1,19 @@
-# llm-wiki-bootstrap Preferences
+# llm-wiki-bootstrap 偏好设置
 
-This file customizes how the llm-wiki-bootstrap skill behaves for this project or
-user account. The first EXTEND.md found in the configured priority order wins.
+此文件用于自定义 llm-wiki-bootstrap skill 在当前项目或用户账户中的行为。
+按照已配置的优先顺序找到的第一个 EXTEND.md 生效。
 
 ```yaml
 bm25:
-  # auto_prompt: remind when thresholds are reached
-  # manual: never remind automatically; only act on explicit user request
-  # off: disable BM25 checks and reminders
-  # enabled: use BM25 when available; initialize if missing and user approves
-  # required: require BM25 for ingest/query/lint once configured
+  # auto_prompt：达到阈值时提醒
+  # manual：不自动提醒；仅在用户明确请求时执行
+  # off：禁用 BM25 检查和提醒
+  # enabled：BM25 可用时使用；如果缺失且用户同意，则进行初始化
+  # required：配置后，ingest／query／lint 必须使用 BM25
   mode: auto_prompt
 
-  # If true, do not repeat the same auto_prompt after the user declines until
-  # the strong thresholds are reached.
+  # 如果为 true，用户拒绝后不再重复相同的 auto_prompt，
+  # 直到达到强提醒阈值。
   prompt_once: true
 
   thresholds:
@@ -44,9 +44,9 @@ bm25:
     include_text: true
 ```
 
-## Notes
+## 说明
 
-- BM25 is optional. It is a local retrieval helper for larger Markdown wikis.
-- BM25 does not replace `wiki/`, `index.md`, `SCHEMA.md`, or the LLM's judgment.
-- Generated search artifacts such as `indexes/fts.sqlite` and `exports/*.jsonl`
-  are rebuildable and should normally stay out of git.
+- BM25 是可选功能。它是用于较大型 Markdown Wiki 的本地检索辅助工具。
+- BM25 不取代 `wiki/`、`index.md`、`SCHEMA.md` 或 LLM 的判断。
+- `indexes/fts.sqlite` 和 `exports/*.jsonl` 等生成的搜索产物均可重建，
+  通常不应纳入 Git。

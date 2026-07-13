@@ -8,7 +8,7 @@
 | 角色 | `wiki/characters/{name}.md` | 角色档案：特征、成长弧线、关系、关键场景。 |
 | 时间线 | `wiki/timeline/{event}.md` | 按时间顺序记录事件，包括日期／章节、参与者和后果。 |
 | 情节线 | `wiki/threads/{name}.md` | 跟踪叙事线索：引入、发展、解决。 |
-| 主题 | `wiki/themes/{name}.md` | 主题分析，包含支持性引文和场景引用。 |
+| 主题 | `wiki/themes/{name}.md` | 主题分析，包含支持该主题的引文和场景引用。 |
 | 地点 | `wiki/locations/{name}.md` | 场景描述、重要性及发生于此的场景。 |
 ```
 
@@ -18,7 +18,7 @@
 | 论文摘要 | `wiki/papers/{slug}.md` | 结构化摘要：问题、方法、结果、局限和引用。 |
 | 主张 | `wiki/claims/{slug}.md` | 具体事实主张，包含不同来源中的支持证据和反对证据。 |
 | 方法 | `wiki/methods/{name}.md` | 研究方法或技术：说明、适用情形及采用该方法的论文。 |
-| 数据集 | `wiki/datasets/{name}.md` | 数据集档案：规模、格式、来源、使用它的论文及已知局限。 |
+| 数据集 | `wiki/datasets/{name}.md` | 数据集档案：规模、格式、来源、使用该数据集的论文及已知局限。 |
 ```
 
 ## 个人
