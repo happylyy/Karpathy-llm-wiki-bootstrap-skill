@@ -35,7 +35,7 @@ The result is a wiki that compounds: new sources update existing pages, useful a
 Install the skill:
 
 ```bash
-npx skills add nanzhipro/Karpathy-llm-wiki-bootstrap-skill@llm-wiki-bootstrap
+npx skills add happylyy/Karpathy-llm-wiki-bootstrap-skill@llm-wiki-bootstrap
 ```
 
 Then ask your agent:
