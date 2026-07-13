@@ -35,7 +35,7 @@
 安装 Skill：
 
 ```bash
-npx skills add nanzhipro/Karpathy-llm-wiki-bootstrap-skill@llm-wiki-bootstrap
+npx skills add happylyy/Karpathy-llm-wiki-bootstrap-skill@llm-wiki-bootstrap
 ```
 
 然后对你的 agent 说：
