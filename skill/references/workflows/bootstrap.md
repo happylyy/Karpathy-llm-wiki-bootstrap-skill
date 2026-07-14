@@ -1,4 +1,4 @@
-# Bootstrap 工作流 — 参考
+# 引导创建(Bootstrap)工作流 — 参考
 
 仅当用户希望创建新的 LLM Wiki 脚手架时使用此工作流。
 在阶段 1 之前，按照 `references/config/extend-schema.md` 查找偏好并完成首次偏好设置。
@@ -163,4 +163,4 @@
   3. 告诉智能体：“读取 {wiki-root}/SCHEMA.md，然后提取 raw/{filename}”
 ```
 
-除非用户明确要求或当前偏好规定必须启用，否则不要在 bootstrap 期间初始化 BM25。如果用户要求 BM25，请在基础脚手架完成后遵循 `references/workflows/bm25.md`。
+除非用户明确要求或当前偏好规定必须启用，否则不要在引导创建期间初始化 BM25。如果用户要求 BM25，请在基础脚手架完成后遵循 `references/workflows/bm25.md`。

@@ -15,12 +15,12 @@ tags: [concept-map, navigation, maintenance]
 - 每当创建、重命名、删除、合并、拆分或实质性修订概念页面时，更新此表。
 - 按概念名称的字母顺序排列各行。
 - 定义应简洁并体现证据情况；链接到完整的概念页面以提供详细信息。
-- `Status` 使用 `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted` 等值。
-- 列标题作为协议标识符保留英文；行内容使用相关概念页面的语言。
+- “状态”使用 `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted` 等值。
+- 行内容使用相关概念页面的语言。
 
-## Concepts
+## 概念
 
-| Concept | Working definition | Role in this wiki | Sources | Related pages | Status | Maintenance note |
-| ------- | ------------------ | ----------------- | ------- | ------------- | ------ | ---------------- |
+| 概念 | 工作定义 | 在本 wiki 中的作用 | 来源 | 相关页面 | 状态 | 维护备注 |
+| --- | --- | --- | --- | --- | --- | --- |
 
 <!-- 在此添加新的概念行 -->

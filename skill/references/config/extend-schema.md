@@ -1,45 +1,43 @@
-# EXTEND.md Schema
+# EXTEND.md 架构
 
-`EXTEND.md` stores user preferences for llm-wiki-bootstrap. It is optional only
-after the first setup has created or selected a preference file. Do not silently
-fall back to defaults when no file exists.
+`EXTEND.md` 用于存储 llm-wiki-bootstrap 的用户偏好。仅在首次设置已创建或选择偏好文件后，
+它才是可选的；当不存在该文件时，不得静默回退到默认值。
 
-## Lookup Order
+## 查找顺序
 
-Read the first file that exists:
+读取第一个存在的文件：
 
-| Priority | Path | Scope |
+| 优先级 | 路径 | 作用域 |
 | --- | --- | --- |
-| 1 | `.llm-wiki-bootstrap/EXTEND.md` | Project |
+| 1 | `.llm-wiki-bootstrap/EXTEND.md` | 项目 |
 | 2 | `${XDG_CONFIG_HOME:-$HOME/.config}/llm-wiki-bootstrap/EXTEND.md` | XDG |
-| 3 | `$HOME/.llm-wiki-bootstrap/EXTEND.md` | User home |
+| 3 | `$HOME/.llm-wiki-bootstrap/EXTEND.md` | 用户主目录 |
 
-On first use in a session, briefly say which file is active:
+在会话中首次使用时，简要说明当前启用的是哪个文件：
 
 ```text
-Using preferences from {path}. You can edit EXTEND.md to customize BM25 thresholds, ingest behavior, search policy, etc.
+正在使用 {path} 中的偏好。你可以编辑 EXTEND.md，以自定义 BM25 阈值、摄取行为、搜索策略等。
 ```
 
-If no file exists, run first-time preference setup before bootstrap, ingest,
-query, lint, or BM25 work.
+如果不存在该文件，请在执行引导创建、摄取、查询、检查或 BM25 工作之前，先完成首次偏好设置。
 
-## First-Time Preference Setup
+## 首次偏好设置
 
-Ask the user where to create the file:
+询问用户要在何处创建该文件：
 
-- Project: `.llm-wiki-bootstrap/EXTEND.md` (recommended)
+- 项目：`.llm-wiki-bootstrap/EXTEND.md`（推荐）
 - XDG: `${XDG_CONFIG_HOME:-$HOME/.config}/llm-wiki-bootstrap/EXTEND.md`
-- User home: `$HOME/.llm-wiki-bootstrap/EXTEND.md`
+- 用户主目录：`$HOME/.llm-wiki-bootstrap/EXTEND.md`
 
-Then ask:
+然后询问：
 
-1. BM25 reminder mode: `auto_prompt` (recommended), `manual`, or `off`
-2. Thresholds: recommended values or custom values
-3. Rebuild policy after ingest: `true` (recommended) or `false`
+1. BM25 提醒模式：`auto_prompt`（推荐）、`manual` 或 `off`
+2. 阈值：使用推荐值或自定义值
+3. 摄取后的重建策略：`true`（推荐）或 `false`
 
-Create the file from `references/templates/extend.md`, adapted to the answers.
+根据回答，以 `references/templates/extend.md` 为基础创建该文件。
 
-## Fields
+## 字段
 
 ```yaml
 bm25:
@@ -74,23 +72,22 @@ bm25:
     include_text: true
 ```
 
-## BM25 Mode Semantics
+## BM25 模式语义
 
-| mode | Behavior |
+| `mode` | 行为 |
 | --- | --- |
-| `auto_prompt` | Check thresholds and ask whether to initialize BM25 when reached. |
-| `manual` | Never prompt automatically; only initialize on explicit user request. |
-| `off` | Disable BM25 checks and reminders. |
-| `enabled` | Use BM25 when available; if missing, ask before initializing. |
-| `required` | Require BM25 for ingest/query/lint once configured; stop if unavailable. |
+| `auto_prompt` | 达到阈值时，询问是否初始化 BM25。 |
+| `manual` | 不自动提示；仅在用户明确请求时初始化。 |
+| `off` | 禁用 BM25 检查和提醒。 |
+| `enabled` | BM25 可用时使用；缺失时先询问再初始化。 |
+| `required` | 配置后，摄取、查询和检查必须使用 BM25；不可用时停止。 |
 
-## Threshold Semantics
+## 阈值语义
 
-If any normal threshold is reached, ask once when `mode: auto_prompt`.
-If any strong threshold is reached, ask again even if the user previously
-declined a normal reminder.
+当 `mode: auto_prompt` 时，任一常规阈值达到后询问一次。
+任一强阈值达到后，即使用户此前拒绝过常规提醒，也应再次询问。
 
-Recommended normal thresholds:
+推荐的常规阈值：
 
 - `source_count >= 30`
 - `wiki_page_count >= 150`
@@ -98,16 +95,15 @@ Recommended normal thresholds:
 - `index_lines >= 500`
 - `query_read_pages >= 15`
 
-Recommended strong thresholds:
+推荐的强阈值：
 
 - `source_count >= 50`
 - `wiki_page_count >= 300`
 - `wiki_text_chars >= 500000`
 
-## Decision Recording
+## 决策记录
 
-If the user declines initialization, record the decision in the active
-`EXTEND.md`:
+如果用户拒绝初始化，请将该决定记录到当前启用的 `EXTEND.md` 中：
 
 ```yaml
 bm25:
@@ -119,6 +115,5 @@ bm25:
     wiki_text_chars: 281000
 ```
 
-Do not write operational state such as index freshness here. Store operational
-events in `wiki/log.md` and derive freshness from file modification times or
-`python3 scripts/wiki_fts.py stats`.
+不要在此处记录索引新鲜度等运行状态。请将运行事件存入 `wiki/log.md`，并根据文件修改时间或
+`python3 scripts/wiki_fts.py stats` 推导新鲜度。

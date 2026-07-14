@@ -1,4 +1,4 @@
-# Ingest 工作流 — 参考
+# 摄取(ingest)工作流 — 参考
 
 将新来源提取进 wiki 的详细协议。schema 文件包含精简版本；本文档覆盖边界情况和设计理由。
 
@@ -84,13 +84,13 @@ tags: [{ auto-generated tags }]
 - 如果页面不存在 -> 使用该来源中的信息创建页面
 - 如果来源与现有内容矛盾 -> 在两个页面中都添加矛盾块
 
-**矛盾格式**（标记与状态值保持原样）：
+**矛盾格式**（状态值保持原样）：
 
 ```markdown
-> ⚠️ CONTRADICTION (added {date})
-> {Source A} claims: "{quote or paraphrase}"
-> {Source B} claims: "{quote or paraphrase}"
-> Resolution: {pending | Source B supersedes (newer data) | both valid in different contexts}
+> ⚠️ 矛盾（添加日期：{date}）
+> {来源 A} 的主张：“{quote or paraphrase}”
+> {来源 B} 的主张：“{quote or paraphrase}”
+> 结论：{pending | 来源 B 优先（数据更新） | 两者在不同语境下均成立}
 ```
 
 ### 步骤 5：更新概念表
@@ -101,19 +101,19 @@ tags: [{ auto-generated tags }]
 
 | 字段                 | 维护规则                                                                             |
 | -------------------- | ------------------------------------------------------------------------------------ |
-| `Concept`            | 链接到 `wiki/concepts/` 下的持久概念页。                                             |
-| `Working definition` | 一个简洁，证据清晰的定义。                                                           |
-| `Role in this wiki`  | 说明该概念为什么对当前知识库重要。                                                   |
-| `Sources`            | 仅使用来源文件名，与页面 frontmatter 风格一致。                                      |
-| `Related pages`      | 重要概念、实体、比较页或综合页。                                                     |
-| `Status`             | `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted`。 |
-| `Maintenance note`   | 未来提取或 lint 应该关注的事项。                                                     |
+| `概念`               | 链接到 `wiki/concepts/` 下的持久概念页。                                             |
+| `工作定义`           | 一个简洁，证据清晰的定义。                                                           |
+| `在本 wiki 中的作用` | 说明该概念为什么对当前知识库重要。                                                   |
+| `来源`               | 仅使用来源文件名，与页面 frontmatter 风格一致。                                      |
+| `相关页面`           | 重要概念、实体、比较页或综合页。                                                     |
+| `状态`               | `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted`。 |
+| `维护备注`           | 未来摄取或检查应当关注的事项。                                                       |
 
-保持概念行按字母顺序排序。如果新来源改变了概念版图，也要更新 `Concept Clusters` 小节。
+保持概念行按字母顺序排序。如果新来源改变了概念版图，也要更新“概念集群”小节。
 
 ### 步骤 6：更新索引
 
-向 `wiki/index.md` 的 Sources 表添加来源条目。添加或更新实体和概念条目。
+向 `wiki/index.md` 的“来源”表添加来源条目。添加或更新实体和概念条目。
 
 ### 步骤 7：更新日志
 

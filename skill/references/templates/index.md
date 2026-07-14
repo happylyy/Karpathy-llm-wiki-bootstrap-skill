@@ -1,41 +1,41 @@
-# Index
+# 索引
 
-> This file catalogs all pages in the wiki. The LLM reads this first when answering queries.
-> Updated automatically on every ingest.
+> 本文件收录 wiki 中的所有页面。LLM 在回答查询时首先读取本文件。
+> 每次摄取后自动更新。
 
-## Core Maps
+## 核心地图
 
-| File | Purpose |
+| 文件 | 用途 |
 | --- | --- |
-| [overview.md](overview.md) | High-level synthesis of the whole wiki |
-| [concept-table.md](concept-table.md) | Maintained concept map with definitions, relationships, sources, status, and maintenance notes |
+| [overview.md](overview.md) | 整个 wiki 的高层综合 |
+| [concept-table.md](concept-table.md) | 持续维护的概念图，包含定义、关系、来源、状态和维护备注 |
 
-## Sources
+## 来源
 
-| File | Title | Date Added | Tags |
+| 文件 | 标题 | 添加日期 | 标签 |
 | --- | --- | --- | --- |
-<!-- New source entries go here -->
+<!-- 在此添加新的来源条目 -->
 
-## Entities
+## 实体
 
-| File | Name | Type | Sources |
+| 文件 | 名称 | 类型 | 来源 |
 | --- | --- | --- | --- |
-<!-- New entity entries go here -->
+<!-- 在此添加新的实体条目 -->
 
-## Concepts
+## 概念
 
-| File | Name | Sources |
+| 文件 | 名称 | 来源 |
 | --- | --- | --- |
-<!-- New concept entries go here -->
+<!-- 在此添加新的概念条目 -->
 
-## Comparisons
+## 对比
 
-| File | Topic | Sources |
+| 文件 | 主题 | 来源 |
 | --- | --- | --- |
-<!-- New comparison entries go here -->
+<!-- 在此添加新的对比条目 -->
 
-## Synthesis
+## 综合
 
-| File | Topic | Sources |
+| 文件 | 主题 | 来源 |
 | --- | --- | --- |
-<!-- New synthesis entries go here -->
+<!-- 在此添加新的综合条目 -->
