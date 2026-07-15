@@ -27,3 +27,20 @@
 - Pages indexed: 28
 - Chunks indexed: 115
 - Export: exports/bm25-chunks.jsonl
+
+## [2026-07-15] ingest | TOGAF 标准——架构开发方法
+
+- Summary: wiki/sources/c220-part1e-architecture-development-method(TOGAF 标准——架构开发方法).md
+- Updated: wiki/overview.md, wiki/index.md, wiki/concept-table.md
+- New pages: 16 concept pages, 2 entity pages, 1 source-summary page
+- Source: C220-Part1e-Architecture Development Method.md
+- Language: Chinese compilation requested by user
+- Contradictions: none identified
+- BM25 preflight: initialized with the bundled Python 3.12 runtime after the `python3` launcher failed; 47 pages and 142 chunks indexed after ingest
+
+## [2026-07-15] rename | TOGAF 页面双名文件迁移
+
+- Scope: 本次 TOGAF 摄取产生的 19 个来源、概念和实体页面
+- Format: `english-slug(中文标题).md`
+- Updated: wiki/index.md, wiki/concept-table.md, wiki/overview.md, wiki/log.md and all affected internal links
+- Excluded: 既有 LLM Wiki 页面与 raw/ 原始资料

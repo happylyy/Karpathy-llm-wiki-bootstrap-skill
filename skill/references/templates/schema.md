@@ -17,20 +17,20 @@ wiki/           # 你的页面（可读写）
 wiki/index.md   # 内容目录——每次 ingest 时更新
 wiki/concept-table.md # 持续维护的概念地图——每次概念变更时更新
 wiki/log.md     # 仅追加的操作日志
-wiki/overview.md # 高层综合——随着理解加深而修订
+wiki/overview(概览).md # 高层综合——随着理解加深而修订
 ```
 
 ## 页面类型
 
 | 类型 | 文件名模式 | 用途 |
 | --- | --- | --- |
-| 来源摘要 | `wiki/sources/{slug}.md` | 每个已 ingest 的来源对应一页，记录关键主张、数据和引文。 |
-| 实体 | `wiki/entities/{name}.md` | 人物、组织、地点、产品——任何具有明确身份的事物。 |
-| 概念 | `wiki/concepts/{name}.md` | 观点、理论、框架、方法。 |
+| 来源摘要 | `wiki/sources/{english-slug}({中文标题}).md` | 每个已 ingest 的来源对应一页，记录关键主张、数据和引文。 |
+| 实体 | `wiki/entities/{english-slug}({中文标题}).md` | 人物、组织、地点、产品——任何具有明确身份的事物。 |
+| 概念 | `wiki/concepts/{english-slug}({中文标题}).md` | 观点、理论、框架、方法。 |
 | 概念表 | `wiki/concept-table.md` | 持续维护的概念矩阵，包含定义、关系、来源、置信度和维护备注。 |
-| 比较 | `wiki/comparisons/{a}-vs-{b}.md` | 对两个或更多实体或概念进行并列分析。 |
-| 综合 | `wiki/synthesis/{topic}.md` | 围绕某个主题进行跨来源分析。 |
-| 概览 | `wiki/overview.md` | 整个知识库的顶层叙述。 |
+| 比较 | `wiki/comparisons/{english-slug}({中文标题}).md` | 对两个或更多实体或概念进行并列分析。 |
+| 综合 | `wiki/synthesis/{english-slug}({中文标题}).md` | 围绕某个主题进行跨来源分析。 |
+| 概览 | `wiki/{english-slug}({中文标题}).md` | 整个知识库的顶层叙述。 |
 
 {DOMAIN_PAGE_TYPES}
 
@@ -52,7 +52,7 @@ tags: [tag1, tag2]
 正文约定：
 
 - 内部交叉引用使用 `[[wikilink]]` 语法
-- 使用行内链接引用来源：`[Source Title](../sources/{slug}.md)`
+- 使用行内链接引用来源：`[中文标题](../sources/{english-slug}({中文标题}).md)`
 - 明确标记矛盾：`> ⚠️ CONTRADICTION: Source A claims X, Source B claims Y.`
 - 在适用时标记置信度：`(high confidence)`、`(tentative)`、`(single-source)`
 
@@ -67,24 +67,28 @@ tags: [tag1, tag2]
 协议：
 
 1. 完整读取来源文件
-2. 与用户讨论关键收获（使用 2–3 个要点，并询问重点是否准确）
-3. 创建 `wiki/sources/{slug}.md`——包含主张、数据和引文的结构化摘要
-4. 更新该来源涉及的现有实体和概念页面
-5. 如果来源引入新实体或概念，创建相应页面
-6. 检查是否与现有 wiki 内容矛盾——在双方页面中都作标记
-7. 对 ingest 期间创建、重命名、合并、拆分、删除或实质性修订的每个概念更新 `wiki/concept-table.md`
-8. 更新 `wiki/index.md`——在正确分类下添加条目
-9. 向 `wiki/log.md` 追加：
+2. 提炼候选内容（不写入文件）：原文摘要、3–5 条关键主张、候选概念及其定义和建议动作、候选实体及其类型和建议动作，以及与现有 wiki 的匹配、重叠或矛盾
+3. 向用户一次性展示确认清单，至少包含摘要和关键主张、候选概念及已有页面匹配、候选实体及已有页面匹配，以及需要特别关注的矛盾
+4. 等待用户明确确认。用户未确认前，不得写入任何 wiki 派生页面；用户提出修正后，重新展示完整修订清单并再次确认，修正本身不视为授权
+5. 用户确认后，创建 `wiki/sources/{english-slug}({中文标题}).md`——包含主张、数据和引文的结构化摘要
+6. 更新该来源涉及的现有实体和概念页面
+7. 如果来源引入新实体或概念，创建相应页面
+8. 检查是否与现有 wiki 内容矛盾——在双方页面中都作标记
+9. 对 ingest 期间创建、重命名、合并、拆分、删除或实质性修订的每个概念更新 `wiki/concept-table.md`
+10. 更新 `wiki/index.md`——在正确分类下添加条目
+11. 向 `wiki/log.md` 追加：
 
    ```text
    ## [{DATE}] ingest | {Source Title}
-   - Summary: wiki/sources/{slug}.md
+   - Summary: wiki/sources/{english-slug}({中文标题}).md
    - Updated: {list of touched pages}
    - New pages: {list of created pages}
    - Contradictions: {list or "none"}
    ```
 
-10. 检查 `wiki/overview.md`——如果新来源改变了整体图景，则进行修订
+12. 检查 `wiki/overview(概览).md`——如果新来源改变了整体图景，则进行修订
+
+普通 ingest 必须经过确认门禁。只有用户明确使用 `ingest silently` 或 `batch ingest` 时，才可以跳过逐来源确认；批量 ingest 仍须按顺序处理，发现矛盾或高影响不确定性时暂停并请求确认。
 
 ### Query
 
@@ -170,7 +174,7 @@ chunk_id, page_path, title, type, heading_path, ordinal, sources, tags, updated,
 
 | File                                 | Purpose                                                                                        |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| [overview.md](overview.md)           | High-level synthesis of the whole wiki                                                         |
+| [overview(概览).md](overview(概览).md) | High-level synthesis of the whole wiki |
 | [concept-table.md](concept-table.md) | Maintained concept map with definitions, relationships, sources, status, and maintenance notes |
 
 ## Sources
@@ -230,6 +234,20 @@ chunk_id, page_path, title, type, heading_path, ordinal, sources, tags, updated,
 - `Status` 使用 `high confidence`、`single-source`、`tentative`、`needs sources` 或 `contradicted` 等值
 - 列标题保持英文，因为它们是协议标识符；行内容使用相关概念页面的语言
 
+## 文件名约定
+
+所有新生成的来源、实体、概念、比较、综合和概览页面都必须使用以下格式：
+
+```text
+english-slug(中文标题).md
+```
+
+- `english-slug` 使用小写 ASCII、连字符分隔且不含空格，是稳定的页面标识。
+- `中文标题` 使用页面正式中文标题；中文括号和全角标点可以保留在括号内。
+- YAML `title`、`wiki/index.md` 显示名、`wiki/concept-table.md` 显示名和 wikilink 标签使用中文标题。
+- `raw/` 中的原始文件不重命名；`sources` frontmatter 仍只记录原始文件名。
+- 创建页面前，在确认清单中展示最终文件名。若目标文件已存在，则更新该页面，不因标题变化创建重复页面。
+
 ## 日志协议
 
 `wiki/log.md` 仅允许追加。每次操作都添加一个条目。格式：
@@ -243,7 +261,7 @@ chunk_id, page_path, title, type, heading_path, ordinal, sources, tags, updated,
 
 ## 约定
 
-- 文件名：小写、使用连字符、不含空格，例如 `attention-is-all-you-need.md`
+- 文件名：所有新页面使用 `english-slug(中文标题).md`，其中英文 slug 小写、使用连字符且不含空格，例如 `attention-is-all-you-need(注意力就是一切).md`
 - 每页只包含一个概念。如果页面扩展到两个不同观点，则拆分页面
 - 结构化比较优先使用表格
 - 不确定时明确注明不确定性，不要省略

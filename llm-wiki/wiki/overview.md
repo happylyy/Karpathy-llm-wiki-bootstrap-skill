@@ -2,29 +2,29 @@
 title: Overview
 type: overview
 created: 2026-05-06
-updated: 2026-05-06
-sources: [karpathy-llm-wiki-original.md]
-tags: [llm-wiki, knowledge-base, agents, markdown]
+updated: 2026-07-15
+sources: [karpathy-llm-wiki-original.md, C220-Part1e-Architecture Development Method.md]
+tags: [llm-wiki, knowledge-base, agents, markdown, togaf, enterprise-architecture]
 ---
 
-This wiki compiles a single source, [LLM Wiki](sources/karpathy-llm-wiki-original.md), into a maintained map of the LLM Wiki pattern. The source argues for a knowledge-base architecture in which an LLM agent incrementally reads raw material, writes and updates Markdown pages, maintains cross-references, and files useful analyses back into the wiki.
+本 wiki 目前包含两条互补的知识线：一条是由 [LLM Wiki](sources/karpathy-llm-wiki-original.md) 来源建立的知识库维护模式，另一条是由 [TOGAF 标准——架构开发方法](sources/c220-part1e-architecture-development-method(TOGAF 标准——架构开发方法).md) 来源建立的企业架构方法知识。
 
 ## Current Thesis
 
-An [[llm-wiki|LLM Wiki]] differs from [[rag|RAG]] because it turns repeated retrieval work into durable structure. The source frames raw documents as the immutable evidence layer, wiki pages as the LLM-maintained knowledge layer, and a schema or operating contract as the discipline that makes the agent behave like a maintainer rather than a generic chatbot.
+[[llm-wiki|LLM Wiki]] 提供了“原始证据—派生知识—操作契约”的维护机制；[[architecture-development-method(架构开发方法（ADM）)|架构开发方法（ADM）]] 提供了一个将企业架构从愿景推进到实施和持续变更的治理化方法。两者的共同点是：复杂知识不能只停留在一次性对话或一次性项目交付中，而需要被结构化、交叉引用、持续维护和复用。
 
-The central claim is that the tedious parts of knowledge-base maintenance - summaries, cross-references, contradiction tracking, filing, indexing, and log updates - are exactly the kind of bookkeeping an LLM agent can perform cheaply. The human remains responsible for source selection, judgment, exploration, and taste.
+TOGAF ADM 的核心路径是：先明确治理、范围、原则和愿景，再分别描述业务、数据、应用和技术架构，通过差距分析形成路线图和迁移计划，最后以实施治理、变更管理和需求管理维持架构的有效性。
 
 ## Key Themes
 
-- Persistent compilation: knowledge is compiled once into pages and kept current.
-- Source separation: raw sources remain stable while wiki pages evolve.
-- Agent maintenance: the LLM owns the wiki layer and the user owns direction.
-- Navigation scaffolding: `index.md`, `log.md`, wikilinks, and optional local search make the wiki navigable.
-- Filing loop: good query answers can become new wiki artifacts instead of disappearing into chat history.
+- 持久编译：原始资料被编译为可维护的来源页、概念页、实体页和综合页面。
+- 架构周期：ADM 将架构工作组织成可裁剪、可迭代的周期，而不是一次性线性流程。
+- 治理与证据：架构原则、利益相关者评审、合规和变更控制让架构决策可追踪。
+- 跨域集成：业务、数据、应用和技术架构共同构成目标架构，而不是互相孤立的目录。
+- 落地与演进：差距分析、路线图、迁移规划、实施治理和变更管理把架构连接到实际变化。
 
 ## Open Questions
 
-- When does a small LLM Wiki need local search beyond `index.md` and direct text search?
-- Which review rhythm best preserves quality without turning the human back into the wiki maintainer?
-- How should future sources distinguish between the abstract pattern and concrete implementations?
+- 如何将 ADM 的治理、需求和路线图机制映射到具体组织的项目与产品流程？
+- 企业连续体和架构仓库应采用什么粒度，才能在复用价值与维护成本之间取得平衡？
+- 后续来源如何补充 TOGAF ADM 的实施案例、成熟度评估和与其他架构方法的比较？

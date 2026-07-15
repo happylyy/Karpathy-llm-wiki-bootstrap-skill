@@ -36,7 +36,7 @@
 │   ├── index.md
 │   ├── concept-table.md
 │   ├── log.md
-│   └── overview.md
+│   └── overview(概览).md
 ├── SCHEMA.md
 ├── {pointer-files}
 └── .gitignore
@@ -112,7 +112,7 @@
 | `wiki/index.md` | `references/templates/index.md` | 添加通用小节和领域专用小节。 |
 | `wiki/concept-table.md` | `references/templates/concept-table.md` | 用当前日期填充 `{DATE}`；概念行保持为空。 |
 | `wiki/log.md` | `references/templates/log.md` | 添加带当前日期的第一条 wiki 创建记录。 |
-| `wiki/overview.md` | `references/templates/overview.md` | 添加简短占位内容，说明 wiki 的目的和领域。 |
+| `wiki/overview(概览).md` | `references/templates/overview.md` | 添加简短占位内容，说明 wiki 的目的和领域。 |
 
 通用索引小节：核心地图、来源、实体、概念、比较、综合。
 

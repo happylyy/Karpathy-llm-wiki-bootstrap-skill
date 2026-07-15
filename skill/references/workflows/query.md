@@ -61,7 +61,7 @@ BM25 只返回候选文本块。不要仅根据摘要片段回答；打开返回
 - 关于 wiki 结构的澄清问题
 - 琐碎或一次性查询
 
-如果值得归档，询问用户：“这份分析值得保留。是否归档为 `wiki/{type}/{slug}.md`？”
+如果值得归档，询问用户：“这份分析值得保留。是否归档为 `wiki/{type}/{english-slug}({中文标题}).md`？”
 
 如果用户同意：
 
@@ -74,7 +74,7 @@ BM25 只返回候选文本块。不要仅根据摘要片段回答；打开返回
    ```text
    ## [{date}] query-filed | {title}
    - 问题：{original question}
-   - 归档位置：wiki/{type}/{slug}.md
+   - 归档位置：wiki/{type}/{english-slug}({中文标题}).md
    - 相关页面：{list}
    ```
 

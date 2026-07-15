@@ -62,6 +62,8 @@ version: 0.1.0
 - 除了在引导创建期间创建 `.gitkeep` 等空骨架占位符之外，绝不修改 `raw/` 中的文件。
 - 绝不直接根据 BM25 片段作答；必须先打开并阅读返回的 wiki 页面。
 - 摄取时首先使用来源语言理解材料，然后使用中文理解并生成wiki非用户要求使用不同的 wiki 语言。
+- 所有新生成的 wiki 页面（来源、实体、概念、比较、综合和概览）必须使用 `english-slug(中文标题).md` 文件名：英文部分为小写 ASCII 连字符 slug，中文部分为正式页面标题。
+- 文件名中的英文 slug 是稳定标识；如果目标文件已存在，则更新该页面，不得仅因中文标题差异创建重复页面。
 - 每当 wiki 内容发生变化时，更新 `wiki/index.md` 并追加写入 `wiki/log.md`。
 - 如果搜索索引重建失败，保留 wiki 编辑，记录失败，并回退到 `wiki/index.md` 加文本搜索。
 
@@ -74,7 +76,7 @@ raw/
 wiki/index.md
 wiki/concept-table.md
 wiki/log.md
-wiki/overview.md
+wiki/overview(概览).md
 SCHEMA.md
 .gitignore
 ```
