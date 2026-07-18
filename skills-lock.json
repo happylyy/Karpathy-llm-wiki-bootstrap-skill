@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "llm-wiki-bootstrap": {
+      "source": "happylyy/Karpathy-llm-wiki-bootstrap-skill",
+      "sourceType": "github",
+      "skillPath": "skill/SKILL.md",
+      "computedHash": "d1bd928afb65869af80f0bca3636dbcf0f324c9ae522a063fd41fb3d36f9ed10"
+    }
+  }
+}
