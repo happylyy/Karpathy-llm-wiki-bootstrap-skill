@@ -1,8 +1,8 @@
 ---
 title: 概览
 type: overview
-created: {DATE}
-updated: {DATE}
+created: { DATE }
+updated: { DATE }
 sources: []
 tags: []
 ---

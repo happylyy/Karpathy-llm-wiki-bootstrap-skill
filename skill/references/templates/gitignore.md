@@ -1,26 +1,31 @@
-# LLM Wiki 的 .gitignore 模板
+# .gitignore template for LLM Wiki
 
-# 操作系统文件
+# OS files
+
 .DS_Store
 Thumbs.db
 
-# 编辑器元数据（Obsidian 会创建自己的元数据）
+# Editor metadata (Obsidian creates its own)
+
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 
-# 临时文件
-*.tmp
-*~
+# Temporary files
 
-# Python 字节码和本地工具缓存
-__pycache__/
-*.py[cod]
+_.tmp
+_~
+
+# Python bytecode and local tool caches
+
+**pycache**/
+\*.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 
-# 可重建的本地 BM25 产物
+# Rebuildable local BM25 artifacts
+
 indexes/fts.sqlite
-exports/*.jsonl
-exports/*.csv
-exports/*.md
+exports/_.jsonl
+exports/_.csv
+exports/\*.md
