@@ -1,0 +1,16 @@
+# .gitignore template for LLM Wiki
+.DS_Store
+Thumbs.db
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+_.tmp
+_~
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+indexes/fts.sqlite
+exports/*.jsonl
+exports/*.csv
+exports/*.md
